@@ -1,11 +1,12 @@
-require('dotenv').config();
+const path = require('path');
+require('dotenv').config({ path: path.join(__dirname, '../.env') });
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const compression = require('compression');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
-const path = require('path');
+const fs = require('fs');
 const routes = require('./routes');
 const { notFound, errorHandler } = require('./middleware/errorHandler');
 
@@ -35,6 +36,17 @@ app.use('/uploads', express.static(path.join(__dirname, '../', process.env.UPLOA
 /* Routes */
 app.get('/api/health', (req, res) => res.json({ success: true, message: 'LunaPOS API OK', time: new Date() }));
 app.use('/api', routes);
+
+/* Serve frontend production build (frontend/dist) jika sudah di-build.
+   Mode lokal: satu port 5000 untuk API + web sekaligus. */
+const distPath = path.join(__dirname, '../../frontend/dist');
+if (fs.existsSync(distPath)) {
+  app.use(express.static(distPath));
+  app.get('*', (req, res, next) => {
+    if (req.path.startsWith('/api') || req.path.startsWith('/uploads')) return next();
+    res.sendFile(path.join(distPath, 'index.html'));
+  });
+}
 
 /* 404 & error */
 app.use(notFound);

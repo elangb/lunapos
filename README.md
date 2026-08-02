@@ -85,7 +85,32 @@ npm install
 npm run dev          # Web di http://localhost:5173
 ```
 
-## 🔑 Akun Demo (password: `password123`)
+## � Mode Produksi (Lokal — Siap Jual / Beli Putus)
+
+Frontend di-build lalu disajikan langsung oleh backend di **satu port 5000**. Tidak perlu hosting, tidak perlu Vite dev server.
+
+### Instalasi untuk pembeli (sekali)
+1. Install [Node.js LTS](https://nodejs.org) + [Laragon](https://laragon.org) (Start All → MySQL di port 3306)
+2. Klik dua kali **`install.bat`** → otomatis: install dependencies, buat `.env` dengan `JWT_SECRET` acak, inisialisasi database + user default, build frontend
+3. Klik dua kali **`start.bat`** → browser terbuka di `http://localhost:5000`
+
+### Backup & Restore (wajib rutin)
+```bash
+npm run backup    # simpan ke backend/backups/, otomatis jaga 10 backup terakhir
+npm run restore -- <nama-file.sql>   # timpa seluruh data (minta konfirmasi YES)
+```
+Atau klik dua kali **`backup.bat`** — hasilnya file SQL di `backend/backups/`. Salin file itu ke flashdisk/cloud sebagai cadangan.
+
+### Checklist sebelum serah terima
+- [ ] Ganti password semua user demo (`password123`) via menu Profil / Users
+- [ ] `npm run build` lalu `npm start` → cek `http://localhost:5000` jalan di mode produksi
+- [ ] `cd backend && node scripts/smoke-test.js` → semua test lulus
+- [ ] Backup pertama setelah data toko diisi
+- [ ] Lampirkan EULA + manual pengguna + batas dukungan
+
+> `npm run setup` untuk mesin baru (`.env` aman + struktur database). `npm run setup:env` untuk regenerate `JWT_SECRET` saja.
+
+## �🔑 Akun Demo (password: `password123`)
 
 | Username | Role | Cabang |
 |---|---|---|
