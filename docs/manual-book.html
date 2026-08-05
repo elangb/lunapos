@@ -1,0 +1,1498 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LunaPOS — Manual Book &amp; Technical Documentation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy-900: #172554;
+    --navy-800: #1e3a8a;
+    --navy-700: #1d4ed8;
+    --teal-600: #2563eb;
+    --teal-500: #3b82f6;
+    --teal-400: #60a5fa;
+    --teal-50: #eff6ff;
+    --gold-500: #38bdf8;
+    --gold-400: #7dd3fc;
+    --ink-900: #0f172a;
+    --ink-700: #334155;
+    --ink-500: #64748b;
+    --ink-400: #94a3b8;
+    --ink-200: #e2e8f0;
+    --ink-100: #f1f5f9;
+    --ink-50: #f8fafc;
+    --success: #059669;
+    --warning: #d97706;
+    --danger: #dc2626;
+    --info: #2563eb;
+    --shadow-sm: 0 1px 2px rgba(15,23,42,.06);
+    --shadow-md: 0 4px 12px rgba(15,23,42,.08);
+    --shadow-lg: 0 12px 32px rgba(15,23,42,.12);
+    --radius: 10px;
+    --container: 920px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    color: var(--ink-900);
+    background: var(--ink-50);
+    line-height: 1.75;
+    font-size: 15px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  .container { max-width: var(--container); margin: 0 auto; padding: 0 32px; }
+
+  h1, h2, h3, h4, h5 {
+    font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+    color: var(--ink-900);
+    letter-spacing: -0.015em;
+    line-height: 1.25;
+  }
+  h2 {
+    font-size: 1.85rem;
+    font-weight: 800;
+    margin: 64px 0 8px;
+    padding-bottom: 14px;
+    position: relative;
+  }
+  h2::after {
+    content: "";
+    position: absolute;
+    bottom: 0; left: 0;
+    width: 56px; height: 4px;
+    background: linear-gradient(90deg, var(--teal-500), var(--gold-500));
+    border-radius: 2px;
+  }
+  h3 { font-size: 1.3rem; font-weight: 700; color: var(--navy-800); margin: 32px 0 10px; }
+  h4 { font-size: 1.05rem; font-weight: 700; color: var(--teal-600); margin: 22px 0 8px; }
+  p { margin: 0 0 14px; color: var(--ink-700); }
+  ul, ol { margin: 0 0 14px 24px; }
+  li { margin-bottom: 4px; color: var(--ink-700); }
+  strong { color: var(--ink-900); font-weight: 600; }
+  a { color: var(--teal-600); text-decoration: none; border-bottom: 1px solid transparent; transition: border-color .2s; }
+  a:hover { border-bottom-color: var(--teal-500); }
+  code {
+    font-family: 'JetBrains Mono', Consolas, 'Courier New', monospace;
+    background: var(--ink-100);
+    color: var(--navy-800);
+    padding: 2px 7px;
+    border-radius: 5px;
+    font-size: 0.85em;
+    font-weight: 500;
+  }
+  pre {
+    background: var(--navy-900);
+    color: #cbd5e1;
+    padding: 18px 22px;
+    border-radius: var(--radius);
+    overflow-x: auto;
+    margin: 14px 0 22px;
+    font-size: 0.85rem;
+    line-height: 1.6;
+    border: 1px solid var(--navy-800);
+  }
+  pre code { background: none; color: inherit; padding: 0; font-size: inherit; }
+
+  table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin: 18px 0 26px;
+    font-size: 0.93rem;
+    background: #fff;
+    border: 1px solid var(--ink-200);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+  }
+  th, td { border-bottom: 1px solid var(--ink-200); padding: 11px 14px; text-align: left; vertical-align: top; }
+  th { background: var(--ink-100); color: var(--navy-800); font-weight: 700; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.04em; }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: var(--teal-50); }
+
+  .callout {
+    padding: 14px 18px;
+    border-radius: var(--radius);
+    margin: 18px 0;
+    font-size: 0.93rem;
+    border-left: 4px solid;
+    background: #fff;
+    box-shadow: var(--shadow-sm);
+  }
+  .callout strong {
+    display: flex; align-items: center; gap: 8px;
+    margin-bottom: 6px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .callout strong::before {
+    content: ""; width: 14px; height: 14px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    background-color: currentColor;
+    -webkit-mask-position: center;
+    mask-position: center;
+    -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+    -webkit-mask-size: contain; mask-size: contain;
+  }
+  .callout.note { border-color: var(--info); background: #eff6ff; color: #1e3a8a; }
+  .callout.note strong { color: var(--info); }
+  .callout.note strong::before { -webkit-mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='black'><path d='M12 2a10 10 0 100 20 10 10 0 000-20zm0 5a1 1 0 011 1v6a1 1 0 11-2 0V8a1 1 0 011-1zm0 12a1 1 0 110-2 1 1 0 010 2z'/></svg>"); mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='black'><path d='M12 2a10 10 0 100 20 10 10 0 000-20zm0 5a1 1 0 011 1v6a1 1 0 11-2 0V8a1 1 0 011-1zm0 12a1 1 0 110-2 1 1 0 010 2z'/></svg>"); }
+  .callout.tips { border-color: var(--success); background: #ecfdf5; color: #065f46; }
+  .callout.tips strong { color: var(--success); }
+  .callout.tips strong::before { -webkit-mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='black'><path d='M9 21h6v-1H9v1zm3-19a7 7 0 00-4 12.74V17a1 1 0 001 1h6a1 1 0 001-1v-2.26A7 7 0 0012 2zm0 2a5 5 0 013 9V16H9v-3a5 5 0 013-9z'/></svg>"); mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='black'><path d='M9 21h6v-1H9v1zm3-19a7 7 0 00-4 12.74V17a1 1 0 001 1h6a1 1 0 001-1v-2.26A7 7 0 0012 2zm0 2a5 5 0 013 9V16H9v-3a5 5 0 013-9z'/></svg>"); }
+  .callout.warning { border-color: var(--warning); background: #fffbeb; color: #92400e; }
+  .callout.warning strong { color: var(--warning); }
+  .callout.warning strong::before { -webkit-mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='black'><path d='M12 5.99L19.53 19H4.47L12 5.99M12 2L1 21h22L12 2zm1 14h-2v2h2v-2zm0-6h-2v5h2v-5z'/></svg>"); mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='black'><path d='M12 5.99L19.53 19H4.47L12 5.99M12 2L1 21h22L12 2zm1 14h-2v2h2v-2zm0-6h-2v5h2v-5z'/></svg>"); }
+  .callout.error { border-color: var(--danger); background: #fef2f2; color: #991b1b; }
+  .callout.error strong { color: var(--danger); }
+  .callout.error strong::before { -webkit-mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='black'><path d='M12 2a10 10 0 100 20 10 10 0 000-20zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z'/></svg>"); mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='black'><path d='M12 2a10 10 0 100 20 10 10 0 000-20zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z'/></svg>"); }
+
+  .screenshot {
+    border: 2px dashed var(--ink-200);
+    background:
+      linear-gradient(135deg, rgba(59,130,246,.06) 25%, transparent 25%, transparent 50%, rgba(59,130,246,.06) 50%, rgba(59,130,246,.06) 75%, transparent 75%),
+      #fff;
+    background-size: 24px 24px;
+    border-radius: var(--radius);
+    padding: 36px 24px;
+    text-align: center;
+    color: var(--ink-500);
+    font-size: 0.92rem;
+    margin: 18px 0 26px;
+  }
+  .screenshot::before {
+    content: "📸"; display: block;
+    font-size: 2.4rem; margin-bottom: 6px;
+  }
+  .screenshot .label {
+    display: block;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 700; color: var(--navy-800);
+    font-size: 0.78rem; text-transform: uppercase;
+    letter-spacing: 0.08em; margin-bottom: 4px;
+  }
+
+  .cover {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 0;
+    background: linear-gradient(135deg, #1e40af 0%, #2563eb 55%, #60a5fa 100%);
+    color: #fff;
+    padding: 0;
+    margin-bottom: 64px;
+    position: relative;
+    overflow: hidden;
+  }
+  .cover::before {
+    content: ""; position: absolute;
+    top: -200px; right: -200px;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(147,197,253,.22), transparent 65%);
+    border-radius: 50%;
+  }
+  .cover::after {
+    content: ""; position: absolute;
+    bottom: -240px; left: -180px;
+    width: 540px; height: 540px;
+    background: radial-gradient(circle, rgba(125,211,252,.14), transparent 65%);
+    border-radius: 50%;
+  }
+  .cover-left {
+    padding: 72px 56px;
+    display: flex; flex-direction: column;
+    justify-content: space-between;
+    position: relative; z-index: 2;
+  }
+  .cover-brand { display: flex; align-items: center; gap: 14px; }
+  .cover-logo {
+    width: 56px; height: 56px;
+    background: linear-gradient(135deg, #60a5fa, #2563eb);
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 800; font-size: 1.5rem;
+    box-shadow: 0 8px 24px rgba(59,130,246,.4);
+  }
+  .cover-brand-name {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 800; font-size: 1.4rem; letter-spacing: -0.02em;
+  }
+  .cover-brand-name span { color: #93c5fd; }
+  .cover-content { position: relative; z-index: 2; }
+  .cover-tag {
+    display: inline-block;
+    padding: 6px 14px;
+    border: 1px solid rgba(255,255,255,.25);
+    border-radius: 100px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem; letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: #bfdbfe;
+    margin-bottom: 22px;
+  }
+  .cover h1 {
+    color: #fff; font-size: 3.2rem; font-weight: 800;
+    line-height: 1.05; margin-bottom: 16px; letter-spacing: -0.025em;
+  }
+  .cover-subtitle {
+    font-size: 1rem; color: rgba(255,255,255,.85);
+    line-height: 1.6; max-width: 460px; margin-bottom: 0;
+  }
+  .cover-footer {
+    font-size: 0.72rem; color: rgba(255,255,255,.6);
+    font-family: 'JetBrains Mono', monospace; letter-spacing: 0.04em;
+  }
+  .cover-right {
+    padding: 72px 56px;
+    display: flex; flex-direction: column; justify-content: center;
+    position: relative; z-index: 2;
+  }
+  .cover-card {
+    background: rgba(255,255,255,.06);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(255,255,255,.14);
+    border-radius: 16px;
+    padding: 26px;
+    box-shadow: 0 24px 60px rgba(0,0,0,.25);
+  }
+  .cover-card-title {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.72rem; text-transform: uppercase;
+    letter-spacing: 0.16em; color: #93c5fd;
+    margin-bottom: 16px; padding-bottom: 12px;
+    border-bottom: 1px solid rgba(255,255,255,.12);
+  }
+  .cover-info {
+    display: grid; grid-template-columns: 100px 1fr;
+    gap: 10px 16px; font-size: 0.88rem;
+  }
+  .cover-info dt {
+    color: rgba(255,255,255,.6);
+    font-weight: 500; text-transform: uppercase;
+    font-size: 0.68rem; letter-spacing: 0.06em;
+  }
+  .cover-info dd { color: #fff; font-weight: 600; margin: 0; }
+  .cover-badges { display: flex; gap: 8px; margin-top: 20px; flex-wrap: wrap; }
+  .cover-badge {
+    background: rgba(147,197,253,.2);
+    border: 1px solid rgba(147,197,253,.45);
+    color: #dbeafe;
+    padding: 5px 11px; border-radius: 100px;
+    font-size: 0.72rem; font-weight: 600; letter-spacing: 0.02em;
+  }
+  .cover-badge.gold {
+    background: rgba(125,211,252,.18);
+    border-color: rgba(125,211,252,.5);
+    color: #7dd3fc;
+  }
+
+  .doc-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 32px; border-bottom: 2px solid var(--ink-200);
+    margin-bottom: 32px; font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+  .doc-header .brand {
+    display: flex; align-items: center; gap: 10px;
+    font-weight: 800; color: var(--navy-800);
+  }
+  .doc-header .brand-mark {
+    width: 28px; height: 28px;
+    background: linear-gradient(135deg, var(--teal-500), var(--teal-600));
+    color: #fff; border-radius: 7px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.78rem;
+  }
+  .doc-header .doc-meta {
+    color: var(--ink-500); font-size: 0.78rem;
+    font-family: 'JetBrains Mono', monospace; letter-spacing: 0.04em;
+  }
+  .doc-header .doc-meta strong { color: var(--navy-800); }
+
+  .toc {
+    background: #fff; border: 1px solid var(--ink-200);
+    border-radius: 12px; padding: 0;
+    margin: 32px 0 48px; box-shadow: var(--shadow-sm); overflow: hidden;
+  }
+  .toc-header {
+    background: linear-gradient(90deg, var(--navy-800), var(--navy-700));
+    color: #fff; padding: 16px 32px;
+    font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700;
+    letter-spacing: 0.04em; font-size: 0.82rem; text-transform: uppercase;
+  }
+  .toc ol { list-style: none; counter-reset: toc; margin: 0; padding: 8px 0; }
+  .toc li { counter-increment: toc; margin: 0; border-bottom: 1px solid var(--ink-100); }
+  .toc li:last-child { border-bottom: none; }
+  .toc li a {
+    display: flex; align-items: center; gap: 14px;
+    padding: 12px 32px; color: var(--ink-900);
+    border-bottom: none; font-weight: 500;
+    transition: background .15s, padding-left .2s;
+  }
+  .toc li a::before {
+    content: counter(toc, decimal-leading-zero);
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700; color: var(--teal-600); min-width: 32px;
+  }
+  .toc li a:hover { background: var(--teal-50); padding-left: 38px; }
+
+  h2 .num {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--teal-500); margin-right: 14px;
+    font-weight: 700; font-size: 0.7em; letter-spacing: 0.04em;
+  }
+
+  .card {
+    background: #fff; border: 1px solid var(--ink-200);
+    border-radius: var(--radius);
+    padding: 22px 26px; margin: 22px 0;
+    box-shadow: var(--shadow-sm);
+  }
+  .card.feature { border-left: 4px solid var(--teal-500); }
+
+  /* ===== KOTAK "BAHASA SEDERHANA" ===== */
+  .plain {
+    background: linear-gradient(135deg, #eff6ff, #f8fafc);
+    border: 1px solid #bfdbfe;
+    border-left: 4px solid var(--teal-500);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    margin: 16px 0 22px;
+  }
+  .plain .plain-label {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 700;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--teal-600);
+    margin-bottom: 4px;
+  }
+  .plain p { margin: 0; font-size: 0.98rem; color: var(--ink-700); }
+
+  .doc-footer {
+    margin: 80px -32px 0; padding: 32px;
+    background: linear-gradient(135deg, var(--navy-900), var(--navy-800));
+    color: rgba(255,255,255,.75); text-align: center;
+    border-radius: 0;
+  }
+  .doc-footer strong { color: #fff; }
+  .doc-footer small {
+    display: block; margin-top: 8px;
+    color: rgba(255,255,255,.45);
+    font-size: 0.75rem;
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.04em;
+  }
+
+  @media print {
+    body { background: #fff; }
+    .cover { page-break-after: always; margin-bottom: 0; }
+    .cover::before, .cover::after { display: none; }
+    .doc-header { display: none; }
+    h2 { page-break-before: always; }
+    h3 { page-break-after: avoid; }
+    table, pre, .callout, .screenshot, .card, .plain { page-break-inside: avoid; }
+    .container { max-width: 100%; padding: 0 16px; }
+    .doc-footer { background: var(--ink-50); color: var(--ink-500); padding: 16px 0; }
+    .doc-footer strong { color: var(--navy-800); }
+    .doc-footer small { color: var(--ink-500); }
+    @page { size: A4; margin: 22mm 18mm; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ COVER ============ -->
+<section class="cover">
+  <div class="cover-left">
+    <div class="cover-brand">
+      <div class="cover-logo">LP</div>
+      <div class="cover-brand-name">Luna<span>POS</span></div>
+    </div>
+    <div class="cover-content">
+      <span class="cover-tag">Document • v1.0</span>
+      <h1>Buku Panduan<br>&amp; Dokumentasi<br>Sistem</h1>
+      <p class="cover-subtitle">
+        Panduan lengkap memakai dan memahami sistem kasir &amp; inventori LunaPOS.
+        Ditulis dengan bahasa sederhana agar mudah dipahami oleh semua orang —
+        mulai kasir, staf gudang, manajer toko, sampai pemilik usaha.
+      </p>
+    </div>
+    <div class="cover-footer">© 2026 LUNAPOS · SEMUA HAK DILINDUNGI</div>
+  </div>
+  <div class="cover-right">
+    <div class="cover-card">
+      <div class="cover-card-title">Informasi Dokumen</div>
+      <dl class="cover-info">
+        <dt>Nomor</dt><dd>LP-DOC-2026-001</dd>
+        <dt>Versi</dt><dd>1.0.0</dd>
+        <dt>Tanggal</dt><dd>05 Agustus 2026</dd>
+        <dt>Disusun</dt><dd>Tim Dokumentasi</dd>
+        <dt>Status</dt><dd>Draft / Review</dd>
+        <dt>Sistem</dt><dd>React + Express + MySQL</dd>
+      </dl>
+      <div class="cover-badges">
+        <span class="cover-badge">Multi-cabang</span>
+        <span class="cover-badge">5 Jenis Pengguna</span>
+        <span class="cover-badge gold">31 Tabel Data</span>
+        <span class="cover-badge">~70 Layanan</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="container">
+
+<div class="doc-header">
+  <div class="brand"><span class="brand-mark">LP</span> LunaPOS — Buku Panduan</div>
+  <div class="doc-meta">Doc <strong>LP-DOC-2026-001</strong> · v1.0 · 05-08-2026</div>
+</div>
+
+<!-- ============ DOCUMENT INFORMATION ============ -->
+<section id="doc-info">
+  <h2><span class="num">§</span>Informasi Dokumen</h2>
+  <div class="plain"><span class="plain-label">Intinya</span><p>Bagian ini berisi data identitas dokumen (siapa yang membuat, kapan, dan untuk apa).</p></div>
+  <table>
+    <tr><th>Item</th><th>Keterangan</th></tr>
+    <tr><td>Nama Sistem</td><td>LunaPOS — Kasir &amp; Inventori</td></tr>
+    <tr><td>Project</td><td>LunaPOS</td></tr>
+    <tr><td>Client</td><td>Internal / Usaha Multi-cabang</td></tr>
+    <tr><td>Versi</td><td>1.0.0</td></tr>
+    <tr><td>Tanggal</td><td>05 Agustus 2026</td></tr>
+    <tr><td>Penulis</td><td>Tim Dokumentasi</td></tr>
+    <tr><td>Reviewer</td><td>Belum tersedia pada source code</td></tr>
+    <tr><td>Approver</td><td>Belum tersedia pada source code</td></tr>
+  </table>
+</section>
+
+<!-- ============ REVISION HISTORY ============ -->
+<section id="revision">
+  <h2><span class="num">§</span>Riwayat Perubahan Dokumen</h2>
+  <div class="plain"><span class="plain-label">Intinya</span><p>Daftar perubahan pada dokumen ini. Setiap kali dokumen diperbarui, versi baru dicatat di sini.</p></div>
+  <table>
+    <tr><th>Versi</th><th>Tanggal</th><th>Perubahan</th><th>Penulis</th></tr>
+    <tr><td>1.0</td><td>05-08-2026</td><td>Dokumen awal (analisis source code)</td><td>Tim Dokumentasi</td></tr>
+  </table>
+</section>
+
+<!-- ============ TOC ============ -->
+<section id="toc">
+  <div class="toc">
+    <div class="toc-header">Daftar Isi</div>
+    <ol>
+      <li><a href="#pendahuluan">Pendahuluan</a></li>
+      <li><a href="#gambaran">Gambaran Sistem</a></li>
+      <li><a href="#persyaratan">Persyaratan Sistem</a></li>
+      <li><a href="#login">Login</a></li>
+      <li><a href="#panduan">Panduan Penggunaan Menu</a></li>
+      <li><a href="#halaman">Penjelasan Setiap Halaman</a></li>
+      <li><a href="#hak-akses">Hak Akses</a></li>
+      <li><a href="#business-flow">Business Flow</a></li>
+      <li><a href="#teknis">Technical Documentation</a></li>
+      <li><a href="#struktur">Struktur Project</a></li>
+      <li><a href="#database">Database</a></li>
+      <li><a href="#api">API Documentation</a></li>
+      <li><a href="#rules">Business Rules</a></li>
+      <li><a href="#error">Error Handling</a></li>
+      <li><a href="#troubleshooting">Troubleshooting</a></li>
+      <li><a href="#faq">FAQ</a></li>
+      <li><a href="#best-practice">Best Practice</a></li>
+      <li><a href="#lampiran">Lampiran</a></li>
+    </ol>
+  </div>
+</section>
+
+<!-- ============ 1. PENDAHULUAN ============ -->
+<section id="pendahuluan">
+  <h2><span class="num">01</span>Pendahuluan</h2>
+  <div class="plain"><span class="plain-label">Intinya</span><p>Bab ini menjelaskan apa itu LunaPOS, mengapa dibuat, dan siapa saja yang memakainya.</p></div>
+
+  <h3>1.1 Latar Belakang</h3>
+  <p>
+    Toko atau usaha yang memiliki beberapa cabang sering kesulitan mencatat penjualan, mengawasi barang,
+    mengatur utang/piutang, dan membuat laporan. Pencatatan manual (buku tulis atau Excel) lambat dan
+    mudah salah. LunaPOS dibuat agar semua pekerjaan itu bisa dilakukan dengan cepat dan rapi dalam
+    satu program.
+  </p>
+
+  <h3>1.2 Tujuan Dokumen</h3>
+  <p>Dokumen ini menjadi acuan resmi untuk:</p>
+  <ul>
+    <li><strong>Panduan Pengguna</strong> — cara memakai aplikasi bagi kasir, gudang, manajer, dan admin.</li>
+    <li><strong>Dokumentasi Teknis</strong> — penjelasan teknis bagi tim pengembang.</li>
+    <li><strong>Serah Terima Project &amp; Transfer Pengetahuan</strong> — memudahkan tim baru memahami sistem.</li>
+    <li><strong>Audit &amp; Perawatan</strong> — dasar evaluasi dan perbaikan sistem.</li>
+    <li><strong>Pelatihan User</strong> — materi belajar bagi pengguna baru.</li>
+  </ul>
+
+  <h3>1.3 Ruang Lingkup</h3>
+  <p>
+    Dokumen ini mencakup seluruh bagian LunaPOS: login, dashboard, kasir, barang, master data,
+    supplier, customer, cabang, user, pembelian, stok, transfer antar cabang, stok opname,
+    kas &amp; shift, promo, laporan, dan cetak barcode.
+  </p>
+
+  <h3>1.4 Target Pengguna</h3>
+  <table>
+    <tr><th>Pengguna</th><th>Penjelasan sederhana</th></tr>
+    <tr><td>Super Admin / Admin Pusat</td><td>Orang yang mengelola seluruh sistem (semua cabang)</td></tr>
+    <tr><td>Manager Cabang</td><td>Kepala toko cabang; menyetujui mutasi barang &amp; opname</td></tr>
+    <tr><td>Kasir</td><td>Petugas di depan kasir yang melayani pembayaran</td></tr>
+    <tr><td>Staf Gudang</td><td>Petugas yang mengurus stok &amp; perpindahan barang</td></tr>
+    <tr><td>Tim Pengembang</td><td>Teknisi yang memelihara dan mengembangkan sistem</td></tr>
+  </table>
+
+  <h3>1.5 Istilah Penting (untuk Pemula)</h3>
+  <table>
+    <tr><th>Istilah</th><th>Arti sederhana</th></tr>
+    <tr><td>POS</td><td>Kasir — tempat di mana transaksi penjualan diproses</td></tr>
+    <tr><td>SKU / Kode Barang</td><td>Nomor unik pengenal sebuah barang</td></tr>
+    <tr><td>BOGO</td><td>Promo beli gratis, contoh "Beli 2 Gratis 1"</td></tr>
+    <tr><td>Hutang</td><td>Uang yang masih harus kita bayar ke pemasok</td></tr>
+    <tr><td>Piutang</td><td>Uang yang masih harus dibayar pelanggan kepada kita</td></tr>
+    <tr><td>Stok Opname</td><td>Menghitung ulang barang fisik untuk dicocokkan dengan catatan</td></tr>
+    <tr><td>Shift</td><td>Jam kerja kasir (dibuka saat mulai kerja, ditutup saat selesai)</td></tr>
+    <tr><td>JWT</td><td>Kartu tanda masuk digital untuk mengamankan aplikasi</td></tr>
+  </table>
+
+  <h3>1.6 Singkatan</h3>
+  <table>
+    <tr><th>Singkatan</th><th>Kepanjangan</th></tr>
+    <tr><td>API</td><td>Application Programming Interface — "jalur komunikasi" antar program</td></tr>
+    <tr><td>DB</td><td>Database — tempat penyimpanan data</td></tr>
+    <tr><td>QRIS</td><td>Standar kode QR pembayaran di Indonesia</td></tr>
+    <tr><td>RBAC</td><td>Pengaturan hak akses berdasarkan peran pengguna</td></tr>
+    <tr><td>CSV</td><td>Format file tabel yang bisa dibuka di Excel</td></tr>
+  </table>
+</section>
+
+<!-- ============ 2. GAMBARAN SISTEM ============ -->
+<section id="gambaran">
+  <h2><span class="num">02</span>Gambaran Sistem</h2>
+  <div class="plain"><span class="plain-label">Intinya</span><p>LunaPOS adalah "kasir digital" sekaligus "buku catatan barang" yang bekerja otomatis. Jualan, stok, utang, dan laporan jadi satu tempat.</p></div>
+
+  <h3>2.1 LunaPOS Itu Apa?</h3>
+  <p>
+    LunaPOS adalah aplikasi kasir dan pengelola stok barang yang berjalan di browser (Chrome/Edge/Firefox).
+    Aplikasi ini bisa dipakai di satu toko atau banyak cabang sekaligus. Semua data — penjualan, barang,
+    pelanggan, utang, dan laporan — tersimpan terpusat dan bisa dilihat oleh pusat.
+  </p>
+
+  <h3>2.2 Apa Saja yang Bisa Dilakukan?</h3>
+  <div class="card feature">
+    <ul style="margin-bottom:0;">
+      <li><strong>Kasir cepat</strong> — scan barcode, barang langsung masuk keranjang, selesai bayar langsung ada struk.</li>
+      <li><strong>Stok terpantau</strong> — tahu barang tinggal berapa, kapan harus beli lagi.</li>
+      <li><strong>Promo otomatis</strong> — "Beli 2 Gratis 1" dihitung sendiri oleh sistem.</li>
+      <li><strong>Utang/piutang tercatat</strong> — tahu siapa yang masih berutang dan berapa.</li>
+      <li><strong>Laporan siap pakai</strong> — rekap penjualan harian, bulanan, tahunan.</li>
+      <li><strong>Kas aman</strong> — selisih uang kasir terdeteksi saat shift ditutup.</li>
+    </ul>
+  </div>
+
+  <h3>2.3 Manfaat untuk Usaha Anda</h3>
+  <ul>
+    <li><strong>Lebih cepat</strong>: transaksi jadi hitungan detik, antrean kasir berkurang.</li>
+    <li><strong>Lebih teliti</strong>: stok dan uang tercatat otomatis, tidak perlu hitung manual.</li>
+    <li><strong>Lebih terkendali</strong>: pemilik bisa memantau semua cabang dari satu tempat.</li>
+    <li><strong>Lebih terarah</strong>: laporan membantu mengambil keputusan jualan.</li>
+  </ul>
+
+  <h3>2.4 Alur Kerja Singkat</h3>
+  <pre>flowchart TD
+    A[Login] --> B[Dashboard]
+    B --> C[Kasir POS]
+    B --> D[Data Barang, Supplier, Customer]
+    C --> E[Penjualan]
+    E --> F{Metode Bayar}
+    F --> G[Cash / Transfer / QRIS]
+    F --> H[Hutang - Piutang]
+    D --> I[Pembelian]
+    I --> J[Stok Masuk]
+    D --> K[Stok Opname & Mutasi]
+    K --> L[Persetujuan Manager]
+    E & I & K --> M[Kas & Shift]
+    M --> N[Laporan & Dashboard]</pre>
+  <div class="screenshot"><span class="label">Gambar — Dashboard</span>Halaman pertama setelah login: ringkasan penjualan, stok, dan grafik.</div>
+</section>
+
+<!-- ============ 3. PERSYARATAN SISTEM ============ -->
+<section id="persyaratan">
+  <h2><span class="num">03</span>Persyaratan Sistem</h2>
+  <div class="plain"><span class="plain-label">Intinya</span><p>Supaya LunaPOS berjalan lancar, komputer perlu memenuhi syarat di bawah ini.</p></div>
+
+  <h3>3.1 Perangkat (Hardware)</h3>
+  <table>
+    <tr><th>Komponen</th><th>Minimal</th><th>Disarankan</th></tr>
+    <tr><td>Prosesor</td><td>2 inti, 2.0 GHz</td><td>4 inti, 3.0 GHz</td></tr>
+    <tr><td>RAM</td><td>4 GB</td><td>8 GB</td></tr>
+    <tr><td>Penyimpanan</td><td>10 GB</td><td>50 GB (SSD)</td></tr>
+    <tr><td>Scanner Barcode</td><td>USB / colok keyboard</td><td>Scanner wireless + kamera</td></tr>
+    <tr><td>Printer</td><td>Printer biasa (A4)</td><td>Printer thermal 58/80 mm</td></tr>
+  </table>
+  <div class="callout note"><strong>Catatan</strong>Angka di atas adalah perkiraan umum. Tidak ada syarat perangkat resmi tertulis di source code.</div>
+
+  <h3>3.2 Perangkat Lunak (Software)</h3>
+  <table>
+    <tr><th>Komponen</th><th>Versi</th></tr>
+    <tr><td>Node.js</td><td>18 ke atas (untuk menjalankan server)</td></tr>
+    <tr><td>MySQL</td><td>8.x (database, disarankan via Laragon)</td></tr>
+    <tr><td>npm</td><td>10 ke atas</td></tr>
+    <tr><td>Laragon (opsional)</td><td>Paket bawaan Windows (Apache/MySQL)</td></tr>
+  </table>
+
+  <h3>3.3 Browser</h3>
+  <ul>
+    <li>Google Chrome (paling disarankan — fitur kamera scanner paling lancar)</li>
+    <li>Microsoft Edge</li>
+    <li>Mozilla Firefox</li>
+    <li>Opera / Safari (versi terbaru)</li>
+  </ul>
+  <div class="callout warning"><strong>Perhatian</strong>Fitur scan barcode pakai kamera butuh izin akses kamera di browser dan koneksi yang aman (HTTPS atau localhost).</div>
+
+  <h3>3.4 Sistem Operasi</h3>
+  <ul>
+    <li>Windows 10/11 (target utama)</li>
+    <li>Linux dan macOS bisa dipakai, tapi belum diuji resmi</li>
+  </ul>
+
+  <h3>3.5 Hak Akses</h3>
+  <p>Sistem punya 5 jenis pengguna: Super Admin, Admin Pusat, Manager Cabang, Kasir, dan Gudang. Setiap jenis punya batasan menu yang berbeda. Detailnya ada di <a href="#hak-akses">Bab 7</a>.</p>
+</section>
+
+<!-- ============ 4. LOGIN ============ -->
+<section id="login">
+  <h2><span class="num">04</span>Login</h2>
+  <div class="plain"><span class="plain-label">Intinya</span><p>Login adalah "pintu masuk" ke aplikasi. Masukkan nama pengguna dan kata sandi, lalu Anda masuk ke dashboard.</p></div>
+
+  <h3>4.1 Cara Masuk (Login)</h3>
+  <ol>
+    <li>Buka aplikasi lewat browser (contoh alamat: <code>http://localhost:5173</code>).</li>
+    <li>Halaman Login akan muncul.</li>
+    <li>Isi <strong>Username</strong> (nama pengguna) dan <strong>Password</strong> (kata sandi).</li>
+    <li>Klik tombol <strong>Masuk</strong>.</li>
+    <li>Jika berhasil, muncul ucapan selamat datang dan Anda diarahkan ke Dashboard.</li>
+  </ol>
+  <div class="screenshot"><span class="label">Gambar — Halaman Login</span>Form isi nama pengguna &amp; kata sandi, dengan logo di sebelah kiri.</div>
+
+  <h3>4.2 Cara Keluar (Logout)</h3>
+  <ol>
+    <li>Klik foto/logo pengguna di pojok kanan atas.</li>
+    <li>Pilih menu <strong>Keluar</strong>.</li>
+    <li>Sistem menutup sesi dan kembali ke halaman Login.</li>
+  </ol>
+
+  <h3>4.3 Ganti / Reset Kata Sandi</h3>
+  <ol>
+    <li>Masuk dengan akun aktif.</li>
+    <li>Klik foto pengguna → pilih <strong>Ubah Password</strong>.</li>
+    <li>Isi kata sandi lama, kata sandi baru (minimal 6 karakter), lalu simpan.</li>
+  </ol>
+  <p>
+    Jika lupa kata sandi, minta admin me-reset lewat menu <strong>User &amp; Hak Akses</strong>.
+    Admin bisa mengatur ulang kata sandi user menjadi yang baru (minimal 6 karakter).
+  </p>
+
+  <h3>4.4 Validasi Login</h3>
+  <table>
+    <tr><th>Kolom</th><th>Aturan</th><th>Pesan jika salah</th></tr>
+    <tr><td>Username</td><td>Wajib diisi</td><td>Username wajib</td></tr>
+    <tr><td>Password</td><td>Wajib diisi</td><td>Password wajib</td></tr>
+    <tr><td>Kredensial</td><td>Harus cocok &amp; akun aktif</td><td>Username atau password salah / Akun nonaktif</td></tr>
+  </table>
+  <div class="callout error"><strong>Kalau Gagal Login</strong>Cek lagi nama pengguna dan kata sandi, pastikan akun aktif, dan pastikan server menyala (alamat cek: <code>http://localhost:5000/api/health</code>).</div>
+</section>
+
+<!-- ============ 5. PANDUAN PENGGUNAAN ============ -->
+<section id="panduan">
+  <h2><span class="num">05</span>Panduan Penggunaan Menu</h2>
+  <div class="plain"><span class="plain-label">Intinya</span><p>Semua menu di LunaPOS mengikuti pola yang sama: buka halaman → cari data → klik tombol → isi form → simpan → muncul notifikasi berhasil. Di bawah ini panduan tiap menu.</p></div>
+
+  <h3>5.1 Kasir POS</h3>
+  <h4>Tujuan</h4><p>Melayani pembayaran di kasir.</p>
+  <h4>Yang Bisa Dilakukan</h4>
+  <ul>
+    <li>Scan barcode barang (dengan scanner atau kamera)</li>
+    <li>Cari barang langsung saat mengetik</li>
+    <li>Atur jumlah, harga, dan potongan harga</li>
+    <li>Promo otomatis langsung dihitung</li>
+    <li>Bayar dengan: Tunai (Cash), Transfer, QRIS, Hutang, atau Campuran</li>
+    <li>Simpan sementara transaksi (Hold) dan panggil kembali (Recall)</li>
+    <li>Cetak struk</li>
+  </ul>
+  <h4>Cara Mengakses</h4><p>Menu samping (sidebar) → <strong>Kasir POS</strong>.</p>
+  <h4>Langkah Penggunaan</h4>
+  <ol>
+    <li>Buka menu Kasir POS.</li>
+    <li>Scan barcode atau ketik nama/kode barang di kolom pencarian.</li>
+    <li>Klik barang yang muncul untuk memasukkannya ke keranjang.</li>
+    <li>Ubah jumlah/harga/diskon jika perlu.</li>
+    <li>Klik <strong>Bayar</strong>.</li>
+    <li>Pilih cara bayar. Jika tunai, isi uang yang diterima. Jika hutang, pilih pelanggan dan tanggal jatuh tempo.</li>
+    <li>Klik <strong>Simpan</strong>. Sistem mencatat transaksi, mengurangi stok, dan menampilkan struk.</li>
+  </ol>
+  <h4>Penjelasan Tombol</h4>
+  <table>
+    <tr><th>Tombol</th><th>Fungsinya</th></tr>
+    <tr><td>Scan</td><td>Memindai barcode dengan kamera</td></tr>
+    <tr><td>Hold</td><td>Menyimpan keranjang untuk dilanjutkan nanti</td></tr>
+    <tr><td>Recall</td><td>Mengambil kembali transaksi yang disimpan tadi</td></tr>
+    <tr><td>Bayar</td><td>Membuka layar pembayaran</td></tr>
+    <tr><td>Struk</td><td>Mencetak struk</td></tr>
+    <tr><td>+ / −</td><td>Menambah/mengurangi jumlah barang</td></tr>
+  </table>
+  <h4>Penjelasan Kolom</h4>
+  <table>
+    <tr><th>Kolom</th><th>Keterangan</th></tr>
+    <tr><td>Pencarian/Scan</td><td>Tempat mengetik kode, nama, atau barcode barang</td></tr>
+    <tr><td>Qty</td><td>Jumlah barang</td></tr>
+    <tr><td>Harga</td><td>Harga jual per satuan (sudah terisi otomatis dari data barang)</td></tr>
+    <tr><td>Diskon</td><td>Potongan harga per barang</td></tr>
+    <tr><td>Customer</td><td>Nama pelanggan (wajib untuk penjualan hutang)</td></tr>
+    <tr><td>Jatuh Tempo</td><td>Tanggal batas bayar untuk penjualan hutang</td></tr>
+  </table>
+  <h4>Aturan Penting</h4>
+  <ul>
+    <li>Keranjang minimal berisi 1 barang.</li>
+    <li>Uang yang diterima tidak boleh kurang dari total belanja.</li>
+    <li>Penjualan hutang wajib memilih pelanggan dan tanggal jatuh tempo.</li>
+    <li>Stok tidak boleh minus — jika stok kurang, sistem menolak transaksi.</li>
+  </ul>
+  <div class="callout tips"><strong>Tips</strong>Pakai scanner kamera untuk barang yang barcodenya tidak bisa diketik; gunakan tombol cepat F2/F4/F5/F6/F9/F12 agar kerja lebih cepat.</div>
+  <h4>Masalah yang Mungkin Terjadi</h4>
+  <table>
+    <tr><th>Masalah</th><th>Solusi</th></tr>
+    <tr><td>Stok tidak cukup</td><td>Kurangi jumlah barang, atau isi stok lewat menu Pembelian</td></tr>
+    <tr><td>Barcode tidak ditemukan</td><td>Cek barcode barang, atau tambahkan barang baru</td></tr>
+    <tr><td>Kamera tidak bisa dipakai</td><td>Izinkan akses kamera di browser; pakai koneksi aman (HTTPS/localhost)</td></tr>
+  </table>
+  <div class="screenshot"><span class="label">Gambar — Kasir POS</span>Layar kasir: keranjang belanja di kanan, daftar barang di kiri.</div>
+
+  <h3>5.2 Barang (Produk)</h3>
+  <h4>Tujuan</h4><p>Mendaftarkan dan mengelola semua barang yang dijual.</p>
+  <h4>Langkah Penggunaan</h4>
+  <ol>
+    <li>Buka menu <strong>Barang</strong>.</li>
+    <li>Klik <strong>Tambah Barang</strong>.</li>
+    <li>Isi kolom wajib: Nama Barang dan Satuan Dasar.</li>
+    <li>Isi harga dan stok minimum (peringatan stok menipis).</li>
+    <li>Bila perlu, tambahkan satuan lain (misal: 1 dus = 144 pcs).</li>
+    <li>Klik <strong>Simpan</strong>.</li>
+  </ol>
+  <h4>Penjelasan Kolom</h4>
+  <table>
+    <tr><th>Kolom</th><th>Wajib?</th><th>Keterangan</th></tr>
+    <tr><td>Nama Barang</td><td>Ya</td><td>Nama produk</td></tr>
+    <tr><td>Kategori</td><td>Tidak</td><td>Golongan barang (makanan, minuman, dll)</td></tr>
+    <tr><td>Merk</td><td>Tidak</td><td>Merek produk</td></tr>
+    <tr><td>Satuan Dasar</td><td>Ya</td><td>Satuan terkecil (pcs, lusin, dus)</td></tr>
+    <tr><td>Barcode</td><td>Tidak</td><td>Kode garis pada kemasan</td></tr>
+    <tr><td>Harga Beli / Retail / Grosir / Member</td><td>Tidak</td><td>4 jenis harga</td></tr>
+    <tr><td>Diskon Default</td><td>Tidak</td><td>Potongan harga biasa (0–100%)</td></tr>
+    <tr><td>Stok Minimum</td><td>Tidak</td><td>Batas stok; di bawah ini dianggap menipis</td></tr>
+    <tr><td>Foto</td><td>Tidak</td><td>Gambar produk (JPG/PNG/WEBP, maksimal 2 MB)</td></tr>
+    <tr><td>Satuan (tabel)</td><td>Tidak</td><td>Satuan lain + nilai konversi + harga</td></tr>
+  </table>
+  <div class="callout tips"><strong>Tips</strong>Pakai tombol <strong>Generate Barcode</strong> agar barcode dibuat otomatis. Manfaatkan satuan bertingkat agar menjual per dus/lusin langsung terhitung otomatis.</div>
+
+  <h3>5.3 Kategori / Merk / Satuan (Data Dasar)</h3>
+  <h4>Tujuan</h4><p>Mengelola data pelengkap: golongan barang, merk, dan satuan.</p>
+  <h4>Langkah Penggunaan</h4>
+  <ol>
+    <li>Buka menu <strong>Kategori / Merk / Satuan</strong>.</li>
+    <li>Pilih tab: Kategori, Merk, atau Satuan.</li>
+    <li>Klik <strong>Tambah</strong>, isi nama (dan singkatan untuk satuan).</li>
+    <li>Klik <strong>Simpan</strong>.</li>
+  </ol>
+  <p>Nama wajib diisi dan harus unik. Data yang dihapus sebenarnya hanya dinonaktifkan, tidak benar-benar hilang.</p>
+
+  <h3>5.4 Supplier (Pemasok)</h3>
+  <h4>Tujuan</h4><p>Mendata pemasok barang dan memantau hutang belanja.</p>
+  <h4>Langkah Penggunaan</h4>
+  <ol>
+    <li>Buka menu <strong>Supplier</strong>.</li>
+    <li>Klik <strong>Tambah Supplier</strong>.</li>
+    <li>Isi nama, kontak, alamat (kode dibuat otomatis).</li>
+    <li>Klik <strong>Simpan</strong>.</li>
+    <li>Gunakan tombol <strong>Lihat Hutang</strong> / <strong>Lihat Pembelian</strong> untuk melihat riwayat.</li>
+  </ol>
+
+  <h3>5.5 Customer (Pelanggan)</h3>
+  <h4>Tujuan</h4><p>Mendata pelanggan, terutama yang sering belanja atau belanja hutang.</p>
+  <h4>Langkah Penggunaan</h4>
+  <ol>
+    <li>Buka menu <strong>Customer</strong>.</li>
+    <li>Klik <strong>Tambah Customer</strong>.</li>
+    <li>Isi nama, tipe (Umum/Grosir/Member), kontak.</li>
+    <li>Klik <strong>Simpan</strong>.</li>
+    <li>Gunakan <strong>Lihat Piutang</strong> / <strong>Lihat Penjualan</strong> untuk detail.</li>
+  </ol>
+
+  <h3>5.6 Cabang</h3>
+  <h4>Tujuan</h4><p>Mendata toko/cabang yang memakai LunaPOS.</p>
+  <h4>Langkah Penggunaan</h4>
+  <ol>
+    <li>Buka menu <strong>Cabang</strong>.</li>
+    <li>Klik <strong>Tambah Cabang</strong>.</li>
+    <li>Isi nama, alamat, penanggung jawab, telepon.</li>
+    <li>Klik <strong>Simpan</strong>.</li>
+  </ol>
+  <div class="callout tips"><strong>Tips</strong>Nonaktifkan cabang yang sudah tutup agar tidak muncul saat memilih lokasi stok.</div>
+
+  <h3>5.7 User &amp; Hak Akses</h3>
+  <h4>Tujuan</h4><p>Mendaftarkan pengguna dan mengatur batasan menu tiap jenis pengguna.</p>
+  <h4>Langkah Penggunaan (Tambah User)</h4>
+  <ol>
+    <li>Buka menu <strong>User &amp; Hak Akses</strong>.</li>
+    <li>Klik <strong>Tambah User</strong>.</li>
+    <li>Isi nama pengguna, nama lengkap, jenis pengguna, cabang.</li>
+    <li>Kata sandi awal otomatis <code>password123</code> (bisa diganti user).</li>
+    <li>Klik <strong>Simpan</strong>.</li>
+  </ol>
+  <h4>Langkah Penggunaan (Atur Hak Akses)</h4>
+  <ol>
+    <li>Klik tombol <strong>Atur Hak Akses</strong> pada jenis pengguna.</li>
+    <li>Tandai menu yang boleh: lihat / tambah / ubah / hapus.</li>
+    <li>Klik <strong>Simpan</strong>.</li>
+  </ol>
+  <p>Super Admin selalu punya akses penuh dan tidak bisa dibatasi.</p>
+
+  <h3>5.8 Riwayat Penjualan</h3>
+  <h4>Tujuan</h4><p>Melihat dan memeriksa semua transaksi yang sudah terjadi.</p>
+  <h4>Langkah Penggunaan</h4>
+  <ol>
+    <li>Buka menu <strong>Riwayat Penjualan</strong>.</li>
+    <li>Atur filter: rentang tanggal, cara bayar, cari nomor invoice/pelanggan.</li>
+    <li>Klik ikon <strong>Detail</strong> untuk melihat rincian.</li>
+    <li>Klik ikon <strong>Void</strong> untuk membatalkan transaksi (stok otomatis kembali).</li>
+  </ol>
+  <div class="callout warning"><strong>Perhatian</strong>Pembatalan (Void) tidak bisa dibatalkan lagi. Stok dikembalikan dan piutang terkait ditutup.</div>
+
+  <h3>5.9 Pembelian &amp; Retur</h3>
+  <h4>Tujuan</h4><p>Mencatat pembelian barang dari pemasok dan mengembalikan barang yang rusak/salah.</p>
+  <h4>Langkah Penggunaan (Pembelian)</h4>
+  <ol>
+    <li>Buka menu <strong>Pembelian &amp; Retur</strong>.</li>
+    <li>Klik <strong>Tambah Pembelian</strong>.</li>
+    <li>Pilih pemasok (supplier).</li>
+    <li>Tambah barang via pencarian atau scan barcode.</li>
+    <li>Isi diskon, pajak, ongkos kirim, dan cara bayar (tunai/hutang).</li>
+    <li>Klik <strong>Simpan</strong> — stok otomatis bertambah.</li>
+  </ol>
+  <h4>Langkah Penggunaan (Retur)</h4>
+  <ol>
+    <li>Pilih pembelian → aksi <strong>Retur</strong>.</li>
+    <li>Pilih barang &amp; jumlah yang dikembalikan (tidak boleh melebihi yang dibeli).</li>
+    <li>Klik <strong>Simpan</strong> — stok otomatis berkurang.</li>
+  </ol>
+
+  <h3>5.10 Stok &amp; Kartu Stok</h3>
+  <h4>Tujuan</h4><p>Memantau jumlah barang di gudang/toko.</p>
+  <h4>Langkah Penggunaan</h4>
+  <ol>
+    <li>Buka menu <strong>Stok &amp; Kartu Stok</strong>.</li>
+    <li>Pilih tab: Mutasi Stok / Stok Saat Ini / Stok Menipis.</li>
+    <li>Atur filter (barang, jenis pergerakan, rentang tanggal).</li>
+    <li>Untuk melihat riwayat satu barang: pilih barang → <strong>Lihat Kartu Stok</strong>.</li>
+  </ol>
+
+  <h3>5.11 Mutasi Antar Cabang (Transfer Stok)</h3>
+  <h4>Tujuan</h4><p>Memindahkan barang dari satu cabang ke cabang lain.</p>
+  <h4>Langkah Penggunaan</h4>
+  <ol>
+    <li>Buka menu <strong>Mutasi Antar Cabang</strong>.</li>
+    <li>Klik <strong>Buat Transfer</strong>.</li>
+    <li>Pilih cabang tujuan, tambahkan barang + jumlah.</li>
+    <li>Klik <strong>Simpan</strong> — status <strong>Menunggu Persetujuan</strong>.</li>
+    <li>Manager: klik <strong>Setujui</strong> / <strong>Tolak</strong>.</li>
+  </ol>
+  <div class="callout note"><strong>Catatan</strong>Barang baru benar-benar pindah setelah disetujui. Jika stok cabang asal kurang, persetujuan gagal.</div>
+
+  <h3>5.12 Stok Opname (Hitung Fisik)</h3>
+  <h4>Tujuan</h4><p>Menghitung ulang barang di rak untuk dicocokkan dengan catatan komputer.</p>
+  <h4>Langkah Penggunaan</h4>
+  <ol>
+    <li>Buka menu <strong>Stok Opname</strong>.</li>
+    <li>Klik <strong>Buat Sesi</strong> — sistem menyalin data stok saat itu.</li>
+    <li>Scan barcode atau pilih barang.</li>
+    <li>Isi jumlah barang yang sebenarnya ada; selisih dihitung otomatis.</li>
+    <li>Klik <strong>Kirim</strong>.</li>
+    <li>Manager: <strong>Setujui</strong> untuk menyesuaikan stok, atau <strong>Tolak</strong>.</li>
+  </ol>
+
+  <h3>5.13 Kas &amp; Shift</h3>
+  <h4>Tujuan</h4><p>Mencatat uang kasir: uang awal, uang masuk/keluar, dan saldo saat shift selesai.</p>
+  <h4>Langkah Penggunaan</h4>
+  <ol>
+    <li>Buka menu <strong>Kas &amp; Shift</strong>.</li>
+    <li>Klik <strong>Buka Shift</strong>, isi uang awal.</li>
+    <li>Catat uang masuk/keluar (masuk, keluar, setor pusat, tarik tunai) selama shift.</li>
+    <li>Klik <strong>Tutup Shift</strong>, isi uang fisik yang ada di laci.</li>
+    <li>Sistem menghitung perkiraan kas dan selisihnya.</li>
+  </ol>
+
+  <h3>5.14 Promo</h3>
+  <h4>Tujuan</h4><p>Membuat program diskon atau beli gratis untuk menarik pembeli.</p>
+  <h4>Langkah Penggunaan</h4>
+  <ol>
+    <li>Buka menu <strong>Promo</strong>.</li>
+    <li>Klik <strong>Tambah Promo</strong>.</li>
+    <li>Pilih jenis: Beli X Gratis Y, atau Diskon persen.</li>
+    <li>Pilih sasaran: barang tertentu / kategori / semua barang; pilih cabang (opsional).</li>
+    <li>Isi periode berlaku (tanggal mulai &amp; selesai).</li>
+    <li>Klik <strong>Simpan</strong>.</li>
+  </ol>
+  <div class="callout tips"><strong>Tips</strong>Promo yang aktif langsung dipakai otomatis saat kasir bertransaksi — kasir tidak perlu mengatur apa-apa.</div>
+
+  <h3>5.15 Laporan</h3>
+  <h4>Tujuan</h4><p>Melihat rekap penjualan, pembelian, kas, stok, dan utang/piutang.</p>
+  <h4>Langkah Penggunaan</h4>
+  <ol>
+    <li>Buka menu <strong>Laporan</strong>.</li>
+    <li>Pilih tab: Penjualan / Pembelian / Kas / Stok / Hutang &amp; Piutang / Bulanan.</li>
+    <li>Atur periode: hari ini, kemarin, minggu, bulan, tahun, atau tanggal sendiri.</li>
+    <li>Pilih rincian (per kasir, cabang, barang, kategori, pelanggan, dll).</li>
+    <li>Klik <strong>Export CSV</strong> untuk mengunduh sebagai file Excel.</li>
+  </ol>
+
+  <h3>5.16 Cetak Barcode</h3>
+  <h4>Tujuan</h4><p>Mencetak label barcode untuk ditempel di barang.</p>
+  <h4>Langkah Penggunaan</h4>
+  <ol>
+    <li>Buka menu <strong>Cetak Barcode</strong>.</li>
+    <li>Pilih barang.</li>
+    <li>Atur jumlah label &amp; ukuran.</li>
+    <li>Lihat pratinjau → klik <strong>Cetak</strong>.</li>
+  </ol>
+
+  <h3>5.17 Dashboard</h3>
+  <h4>Tujuan</h4><p>Halaman utama yang menampilkan ringkasan kondisi toko hari ini.</p>
+  <h4>Langkah Penggunaan</h4>
+  <ol>
+    <li>Buka halaman utama (setelah login).</li>
+    <li>Lihat ringkasan: omzet, laba, jumlah transaksi, piutang, hutang, stok menipis.</li>
+    <li>Lihat grafik penjualan 7 hari &amp; 12 bulan, barang terlaris, cabang terbaik.</li>
+    <li>Klik <strong>Buka Kasir</strong> untuk langsung ke layar kasir.</li>
+  </ol>
+</section>
+
+<!-- ============ 6. PENJELASAN SETIAP HALAMAN ============ -->
+<section id="halaman">
+  <h2><span class="num">06</span>Penjelasan Setiap Halaman</h2>
+  <div class="plain"><span class="plain-label">Intinya</span><p>Tabel di bawah ini merangkum isi setiap halaman: apa fungsinya, komponen apa saja yang ada, dan fitur apa yang tersedia.</p></div>
+  <table>
+    <tr><th>Halaman</th><th>Tujuan</th><th>Komponen Utama</th><th>Filter/Search</th><th>Tabel</th><th>Chart</th><th>Modal</th></tr>
+    <tr><td>Login</td><td>Masuk ke aplikasi</td><td>Form + logo</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+    <tr><td>Dashboard</td><td>Ringkasan bisnis</td><td>Kartu angka, grafik, daftar</td><td>-</td><td>Top 10 barang</td><td>Line, Bar</td><td>-</td></tr>
+    <tr><td>Kasir POS</td><td>Transaksi penjualan</td><td>Keranjang, scanner</td><td>Cari/scan</td><td>Keranjang</td><td>-</td><td>Bayar, Scanner, Hold</td></tr>
+    <tr><td>Barang</td><td>Master barang</td><td>Tabel + form barang</td><td>Cari, kategori, stok menipis</td><td>Ya + halaman</td><td>-</td><td>Form + barcode</td></tr>
+    <tr><td>Kategori/Merk/Satuan</td><td>Data pelengkap</td><td>Tabel + form</td><td>Cari</td><td>Ya</td><td>-</td><td>Form</td></tr>
+    <tr><td>Supplier</td><td>Data pemasok</td><td>Tabel + detail</td><td>Cari</td><td>Ya</td><td>-</td><td>Form + detail</td></tr>
+    <tr><td>Customer</td><td>Data pelanggan</td><td>Tabel + detail</td><td>Cari</td><td>Ya</td><td>-</td><td>Form + detail</td></tr>
+    <tr><td>Cabang</td><td>Data toko/cabang</td><td>Tabel + form</td><td>Cari</td><td>Ya</td><td>-</td><td>Form</td></tr>
+    <tr><td>User &amp; Hak Akses</td><td>Data pengguna</td><td>Tabel + editor hak akses</td><td>Cari, jenis</td><td>Ya</td><td>-</td><td>Form + hak akses</td></tr>
+    <tr><td>Riwayat Penjualan</td><td>Periksa transaksi</td><td>Tabel + detail</td><td>Tanggal, cara bayar, cari</td><td>Ya</td><td>-</td><td>Detail, bayar piutang</td></tr>
+    <tr><td>Pembelian &amp; Retur</td><td>Beli barang</td><td>Tabel + form pembelian</td><td>Tanggal, supplier, cari</td><td>Ya</td><td>-</td><td>Form + retur</td></tr>
+    <tr><td>Stok &amp; Kartu Stok</td><td>Pantau stok</td><td>Tabel, kartu stok</td><td>Barang, jenis, tanggal</td><td>Ya</td><td>-</td><td>Kartu stok</td></tr>
+    <tr><td>Mutasi Antar Cabang</td><td>Pindah stok</td><td>Tabel + form</td><td>Status</td><td>Ya</td><td>-</td><td>Form + detail</td></tr>
+    <tr><td>Stok Opname</td><td>Hitung fisik</td><td>Tabel + sesi</td><td>Status</td><td>Ya</td><td>-</td><td>Sesi + isi jumlah</td></tr>
+    <tr><td>Kas &amp; Shift</td><td>Kelola uang kasir</td><td>Tabel + shift</td><td>Jenis, tanggal</td><td>Ya</td><td>-</td><td>Shift + transaksi</td></tr>
+    <tr><td>Promo</td><td>Program diskon</td><td>Tabel + form promo</td><td>Cari, aktif</td><td>Ya</td><td>-</td><td>Form promo</td></tr>
+    <tr><td>Laporan</td><td>Rekap &amp; analisis</td><td>Tab, grafik, ringkasan</td><td>Periode, rincian</td><td>Ya</td><td>Bar, Line, Pie</td><td>-</td></tr>
+    <tr><td>Cetak Barcode</td><td>Cetak label</td><td>Daftar + pratinjau</td><td>Cari</td><td>Ya (pilih)</td><td>-</td><td>-</td></tr>
+    <tr><td>Profile</td><td>Ganti kata sandi</td><td>Form</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+  </table>
+  <div class="screenshot"><span class="label">Gambar — Halaman Laporan</span>Contoh layar laporan dengan tab dan grafik.</div>
+</section>
+
+<!-- ============ 7. HAK AKSES ============ -->
+<section id="hak-akses">
+  <h2><span class="num">07</span>Hak Akses</h2>
+  <div class="plain"><span class="plain-label">Intinya</span><p>Setiap jenis pengguna punya batasan sendiri. C = boleh tambah, R = boleh lihat, U = boleh ubah, D = boleh hapus, "-" = tidak bisa apa-apa.</p></div>
+  <table>
+    <tr><th>Menu</th><th>Super Admin</th><th>Admin Pusat</th><th>Manager Cabang</th><th>Kasir</th><th>Gudang</th></tr>
+    <tr><td>Dashboard</td><td>R</td><td>R</td><td>R</td><td>R</td><td>R</td></tr>
+    <tr><td>Produk</td><td>CRUD</td><td>CRUD</td><td>CRU</td><td>R</td><td>CRU</td></tr>
+    <tr><td>Kategori/Merk/Satuan</td><td>CRUD</td><td>CRUD</td><td>CRU</td><td>-</td><td>CRU</td></tr>
+    <tr><td>Supplier</td><td>CRUD</td><td>CRUD</td><td>CRU</td><td>-</td><td>CRU</td></tr>
+    <tr><td>Customer</td><td>CRUD</td><td>CRUD</td><td>CRU</td><td>CR</td><td>-</td></tr>
+    <tr><td>Cabang</td><td>CRUD</td><td>CRUD</td><td>R</td><td>-</td><td>-</td></tr>
+    <tr><td>User</td><td>CRUD</td><td>CRUD</td><td>R</td><td>-</td><td>-</td></tr>
+    <tr><td>Penjualan</td><td>CRUD</td><td>CRUD</td><td>CRUD</td><td>CR</td><td>R</td></tr>
+    <tr><td>Pembelian</td><td>CRUD</td><td>CRUD</td><td>CRU</td><td>-</td><td>CR</td></tr>
+    <tr><td>Retur</td><td>CRUD</td><td>CRUD</td><td>CRU</td><td>-</td><td>CRUD</td></tr>
+    <tr><td>Transfer</td><td>CRUD</td><td>CRUD</td><td>CRU</td><td>-</td><td>CRU</td></tr>
+    <tr><td>Opname</td><td>CRUD</td><td>CRUD</td><td>CRU</td><td>-</td><td>CRU</td></tr>
+    <tr><td>Stok</td><td>CRUD</td><td>CRUD</td><td>RU</td><td>R</td><td>CRUD</td></tr>
+    <tr><td>Kas</td><td>CRUD</td><td>CRUD</td><td>CRU</td><td>CR</td><td>-</td></tr>
+    <tr><td>Shift</td><td>CRUD</td><td>CRUD</td><td>CRU</td><td>CRU</td><td>-</td></tr>
+    <tr><td>Promo</td><td>CRUD</td><td>CRUD</td><td>R</td><td>-</td><td>-</td></tr>
+    <tr><td>Laporan</td><td>R</td><td>R</td><td>R</td><td>R</td><td>R</td></tr>
+    <tr><td>Barcode</td><td>CRUD</td><td>CRUD</td><td>CRUD</td><td>-</td><td>CRUD</td></tr>
+  </table>
+</section>
+
+<!-- ============ 8. BUSINESS FLOW ============ -->
+<section id="business-flow">
+  <h2><span class="num">08</span>Business Flow</h2>
+  <div class="plain"><span class="plain-label">Intinya</span><p>Gambar alur di bawah menunjukkan bagaimana proses bekerja langkah demi langkah. Cocok untuk memahami "jalan cerita" sebuah transaksi.</p></div>
+
+  <h3>8.1 Alur Transaksi Kasir</h3>
+  <pre>flowchart TD
+    A[Scan / cari barang] --> B[Tambah ke keranjang]
+    B --> C{Promo aktif?}
+    C -- Ya --> D[Barang gratis / diskon otomatis]
+    C -- Tidak --> E[Total normal]
+    D --> E
+    E --> F[Pilih cara bayar]
+    F --> G[Isi uang / data hutang]
+    G --> H[Cek stok]
+    H -- Kurang --> I[Error: stok tidak cukup]
+    H -- Cukup --> J[Simpan transaksi + kurangi stok]
+    J --> K[Catat kas / piutang]
+    K --> L[Cetak struk]</pre>
+
+  <h3>8.2 Alur Pindah Barang Antar Cabang</h3>
+  <pre>flowchart TD
+    A[Buat permintaan pindah barang] --> B[Status: menunggu]
+    B --> C{Persetujuan}
+    C -- Setujui --> D[Cek stok cabang asal]
+    D -- Cukup --> E[Stok keluar + masuk]
+    E --> F[Status: disetujui]
+    D -- Kurang --> G[Persetujuan gagal]
+    C -- Tolak --> H[Status: ditolak]</pre>
+
+  <h3>8.3 Alur Login</h3>
+  <pre>sequenceDiagram
+    participant U as Pengguna
+    participant F as Tampilan
+    participant A as Server
+    participant D as Database
+    U->>F: Isi nama & kata sandi
+    F->>A: Kirim data login
+    A->>D: Cari data pengguna
+    D-->>A: Data ditemukan
+    A->>A: Cocokkan kata sandi + buat tiket masuk
+    A-->>F: Beri tiket + data pengguna
+    F-->>U: Masuk ke Dashboard</pre>
+</section>
+
+<!-- ============ 9. TECHNICAL DOCUMENTATION ============ -->
+<section id="teknis">
+  <h2><span class="num">09</span>Technical Documentation</h2>
+  <div class="plain"><span class="plain-label">Untuk Tim Teknis</span><p>Bagian ini khusus untuk programmer dan teknisi. Pengguna umum boleh melewatinya.</p></div>
+
+  <h3>9.1 Arsitektur Sistem</h3>
+  <pre>flowchart LR
+    subgraph Client [React SPA :5173]
+        UI[Komponen] --> STORE[Zustand]
+        STORE --> API[Axios client]
+    end
+    subgraph Server [Express API :5000]
+        API --> MID[Middleware auth/rate-limit]
+        MID --> ROUTES[Routes]
+        ROUTES --> CTRL[Controllers]
+        CTRL --> SVC[services/promo]
+        CTRL --> HELP[utils/helpers]
+        SVC --> DB[(MySQL)]
+        HELP --> DB
+    end
+    DB --> API</pre>
+
+  <h3>9.2 Frontend</h3>
+  <ul>
+    <li><strong>Framework:</strong> React 18 + Vite 5 + Tailwind CSS 3</li>
+    <li><strong>State:</strong> Zustand (auth, pos, ui) — token persist di localStorage</li>
+    <li><strong>Routing:</strong> React Router 6 + ProtectedRoute</li>
+    <li><strong>Data:</strong> Axios client dengan interceptor token &amp; auto-logout 401</li>
+    <li><strong>Table:</strong> TanStack Table (DataTable generik + pagination)</li>
+    <li><strong>Chart:</strong> Recharts (Line/Bar/Pie)</li>
+    <li><strong>Form:</strong> React Hook Form + Zod resolver</li>
+  </ul>
+
+  <h3>9.3 Backend</h3>
+  <ul>
+    <li><strong>Framework:</strong> Express 4 (CommonJS)</li>
+    <li><strong>Database:</strong> mysql2/promise (pool 10 koneksi)</li>
+    <li><strong>Auth:</strong> JWT (12 jam) + bcryptjs</li>
+    <li><strong>Validasi:</strong> Zod</li>
+    <li><strong>Middleware:</strong> helmet, cors, compression, morgan, express-rate-limit (1000 req/15 mnt), upload multer</li>
+    <li><strong>Pola:</strong> Controller → Service (promo) → Helper → DB pool</li>
+  </ul>
+
+  <h3>9.4 Database</h3>
+  <p>MySQL 8, 31 tabel, InnoDB, charset utf8mb4. Seluruh query menggunakan parameterized statements. Detail pada <a href="#database">Bab 11 Database</a>.</p>
+
+  <h3>9.5 API</h3>
+  <p>REST API dengan prefix <code>/api</code>. Response seragam: <code>{ success, message, data, meta }</code>. Detail pada <a href="#api">Bab 12 API Documentation</a>.</p>
+
+  <h3>9.6 Authentication</h3>
+  <ul>
+    <li>Login → validasi bcrypt → sign JWT <code>{ id, username, role_id }</code></li>
+    <li>Setiap request membawa <code>Authorization: Bearer &lt;token&gt;</code></li>
+    <li>Middleware <code>auth</code> memverifikasi token + memuat permission dari DB setiap request</li>
+    <li><code>requirePerm(menu, aksi)</code> untuk otorisasi; Super Admin bypass</li>
+  </ul>
+
+  <h3>9.7 Middleware</h3>
+  <table>
+    <tr><th>Middleware</th><th>Fungsi</th></tr>
+    <tr><td>auth</td><td>Verifikasi JWT, muat user + permissions</td></tr>
+    <tr><td>requirePerm</td><td>Otorisasi per menu &amp; aksi</td></tr>
+    <tr><td>errorHandler</td><td>Error terpusat (DB error, upload, JSON parse)</td></tr>
+    <tr><td>upload</td><td>Multer: 2MB, JPG/PNG/WEBP</td></tr>
+  </table>
+
+  <h3>9.8 Service</h3>
+  <p><code>services/promo.js</code> — engine promo BOGO &amp; diskon: memuat promo aktif, mencocokkan target, menambahkan item gratis, menghitung diskon.</p>
+
+  <h3>9.9 Repository</h3>
+  <p>Belum tersedia pada source code — akses data langsung via pool query di controller (tanpa layer repository terpisah).</p>
+
+  <h3>9.10 Controller</h3>
+  <p>14 controller di <code>backend/src/controllers/</code> menangani logika bisnis per modul (lihat bagian 20 pada <a href="DOKUMENTASI-SISTEM.md">DOKUMENTASI-SISTEM.md</a>).</p>
+
+  <h3>9.11 Model</h3>
+  <p>Belum tersedia pada source code — tidak menggunakan ORM; skema didefinisikan di <code>database/schema.sql</code>.</p>
+</section>
+
+<!-- ============ 10. STRUKTUR PROJECT ============ -->
+<section id="struktur">
+  <h2><span class="num">10</span>Struktur Project</h2>
+  <div class="plain"><span class="plain-label">Untuk Tim Teknis</span><p>Peta lokasi file-file sistem. Berguna untuk programmer yang baru bergabung.</p></div>
+  <pre>lunapos/
+├── package.json              # Perintah utama (jalankan semua)
+├── database/
+│   ├── schema.sql            # Struktur 31 tabel + relasi + index
+│   └── seed.sql              # Data contoh awal
+├── backend/
+│   ├── scripts/              # init-db.js, smoke-test.js
+│   ├── uploads/              # Foto barang
+│   └── src/
+│       ├── index.js          # Titik masuk server
+│       ├── config/db.js      # Koneksi database
+│       ├── controllers/      # 14 pengatur logika
+│       ├── middleware/       # auth, errorHandler, upload
+│       ├── routes/index.js   # Daftar layanan API
+│       ├── services/promo.js # Mesin promo
+│       └── utils/helpers.js  # Alat bantu umum
+└── frontend/
+    ├── vite.config.js        # Pengaturan proxy
+    └── src/
+        ├── api/              # Pemanggil API
+        ├── components/       # 10 komponen tampilan
+        ├── pages/            # 19 halaman
+        ├── stores/           # Penyimpanan data tampilan
+        └── utils/            # format, toast, confirm</pre>
+  <table>
+    <tr><th>Folder</th><th>Fungsi</th></tr>
+    <tr><td>backend/src/controllers</td><td>Logika bisnis per modul</td></tr>
+    <tr><td>backend/src/middleware</td><td>Keamanan (JWT), penanganan error, upload</td></tr>
+    <tr><td>backend/src/routes</td><td>Daftar layanan API</td></tr>
+    <tr><td>backend/src/services</td><td>Mesin promo</td></tr>
+    <tr><td>backend/src/utils</td><td>Alat bantu: response, pagination, audit, mutasi stok</td></tr>
+    <tr><td>frontend/src/pages</td><td>Halaman aplikasi</td></tr>
+    <tr><td>frontend/src/components</td><td>Komponen tampilan yang dipakai berulang</td></tr>
+    <tr><td>frontend/src/stores</td><td>Penyimpanan data tampilan (Zustand)</td></tr>
+    <tr><td>frontend/src/api</td><td>Pemanggil API</td></tr>
+  </table>
+</section>
+
+<!-- ============ 11. DATABASE ============ -->
+<section id="database">
+  <h2><span class="num">11</span>Database</h2>
+  <div class="plain"><span class="plain-label">Untuk Tim Teknis</span><p>Database adalah "gudang data" sistem. Bagian ini menjelaskan tabel-tabel dan hubungannya.</p></div>
+
+  <h3>11.1 Entity &amp; Relasi (ERD)</h3>
+  <pre>erDiagram
+    ROLES ||--o{ USERS : "memiliki"
+    ROLES ||--o{ PERMISSIONS : ""
+    BRANCHES ||--o{ USERS : ""
+    BRANCHES ||--o{ SALES : ""
+    USERS ||--o{ SALES : "kasir"
+    CUSTOMERS ||--o{ SALES : ""
+    SALES ||--o{ SALE_ITEMS : ""
+    SALES ||--o{ RECEIVABLES : ""
+    SALES ||--o{ SALE_HOLDS : ""
+    PRODUCTS ||--o{ PRODUCT_UNITS : ""
+    PRODUCTS ||--o{ PRODUCT_STOCKS : ""
+    PRODUCTS ||--o{ SALE_ITEMS : ""
+    CATEGORIES ||--o{ PRODUCTS : ""
+    BRANDS ||--o{ PRODUCTS : ""
+    UNITS ||--o{ PRODUCTS : ""
+    BRANCHES ||--o{ PURCHASES : ""
+    SUPPLIERS ||--o{ PURCHASES : ""
+    PURCHASES ||--o{ PURCHASE_ITEMS : ""
+    PURCHASES ||--o{ DEBTS : ""
+    DEBTS ||--o{ DEBT_PAYMENTS : ""
+    PURCHASES ||--o{ PURCHASE_RETURNS : ""
+    PURCHASE_RETURNS ||--o{ PURCHASE_RETURN_ITEMS : ""
+    PRODUCTS ||--o{ STOCK_MOVEMENTS : ""
+    BRANCHES ||--o{ STOCK_MOVEMENTS : ""
+    BRANCHES ||--o{ STOCK_TRANSFERS : ""
+    STOCK_TRANSFERS ||--o{ STOCK_TRANSFER_ITEMS : ""
+    STOCK_OPNAMES ||--o{ STOCK_OPNAME_ITEMS : ""
+    BRANCHES ||--o{ SHIFTS : ""
+    SHIFTS ||--o{ CASH_TRANSACTIONS : ""
+    PROMOTIONS ||--o{ PROMO_ITEMS : ""</pre>
+
+  <h3>11.2 Tabel Utama</h3>
+  <table>
+    <tr><th>Kelompok</th><th>Tabel</th></tr>
+    <tr><td>Hak akses</td><td>roles, permissions</td></tr>
+    <tr><td>Organisasi</td><td>branches (cabang), users (pengguna)</td></tr>
+    <tr><td>Barang</td><td>categories, brands, units, products, product_units, product_stocks</td></tr>
+    <tr><td>Pihak</td><td>suppliers (pemasok), customers (pelanggan)</td></tr>
+    <tr><td>Penjualan</td><td>sales, sale_items, sale_holds</td></tr>
+    <tr><td>Pembelian</td><td>purchases, purchase_items, purchase_returns, purchase_return_items</td></tr>
+    <tr><td>Stok</td><td>stock_movements, stock_transfers, stock_transfer_items, stock_opnames, stock_opname_items</td></tr>
+    <tr><td>Kas</td><td>shifts, cash_transactions</td></tr>
+    <tr><td>Keuangan</td><td>debts, debt_payments, receivables, receivable_payments</td></tr>
+    <tr><td>Promo</td><td>promotions, promo_items</td></tr>
+    <tr><td>Audit</td><td>audit_logs (catatan aktivitas)</td></tr>
+  </table>
+
+  <h3>11.3 Kunci &amp; Aturan Data</h3>
+  <ul>
+    <li>Setiap tabel punya nomor unik <code>id</code>.</li>
+    <li>Hubungan antar tabel memakai kunci tamu (foreign key), contoh: transaksi penjualan terhubung ke cabang dan kasir.</li>
+    <li>Beberapa kolom wajib unik: nama pengguna, kode barang, nomor invoice, nomor pembelian, dll.</li>
+    <li>Beberapa kolom hanya boleh berisi nilai tertentu (contoh: cara bayar hanya cash/transfer/qris/hutang).</li>
+  </ul>
+</section>
+
+<!-- ============ 12. API DOCUMENTATION ============ -->
+<section id="api">
+  <h2><span class="num">12</span>API Documentation</h2>
+  <div class="plain"><span class="plain-label">Untuk Tim Teknis</span><p>API adalah "layanan" yang dipanggil aplikasi untuk menyimpan/mengambil data. Tabel di bawah merangkum semua layanan.</p></div>
+
+  <h3>12.1 Ringkasan Endpoint</h3>
+  <table>
+    <tr><th>Method</th><th>Endpoint</th><th>Fungsi</th><th>Request</th><th>Response</th></tr>
+    <tr><td>POST</td><td>/auth/login</td><td>Login</td><td>{username, password}</td><td>{token, user}</td></tr>
+    <tr><td>POST</td><td>/auth/refresh</td><td>Perbarui tiket</td><td>Bearer token</td><td>{token}</td></tr>
+    <tr><td>GET</td><td>/auth/me</td><td>Data pengguna</td><td>-</td><td>user + permissions</td></tr>
+    <tr><td>GET/POST/PUT/DELETE</td><td>/users, /users/:id</td><td>Kelola pengguna</td><td>data user</td><td>list/detail/sukses</td></tr>
+    <tr><td>GET/PUT</td><td>/users/:id/permissions</td><td>Hak akses</td><td>{permissions:[...]}</td><td>list/sukses</td></tr>
+    <tr><td>GET/POST/PUT/DELETE</td><td>/branches</td><td>Kelola cabang</td><td>data cabang</td><td>list/detail/sukses</td></tr>
+    <tr><td>GET/POST/PUT/DELETE</td><td>/categories, /brands, /units</td><td>Data dasar</td><td>{name,...}</td><td>list/detail/sukses</td></tr>
+    <tr><td>GET/POST/PUT/DELETE</td><td>/products, /products/:id</td><td>Kelola barang</td><td>produk + units</td><td>list/detail/sukses</td></tr>
+    <tr><td>POST</td><td>/products/generate-barcode</td><td>Buat barcode</td><td>{product_id, format}</td><td>{barcode}</td></tr>
+    <tr><td>POST</td><td>/products/:id/adjust-stock</td><td>Ubah stok manual</td><td>{branch_id, qty, note}</td><td>sukses</td></tr>
+    <tr><td>GET/POST/PUT/DELETE</td><td>/suppliers, /customers</td><td>Data pemasok/pelanggan</td><td>data pihak</td><td>list/detail/sukses</td></tr>
+    <tr><td>GET</td><td>/suppliers/:id/debts, /customers/:id/receivables</td><td>Hutang/piutang</td><td>-</td><td>list</td></tr>
+    <tr><td>POST</td><td>/sales</td><td>Simpan transaksi kasir</td><td>items + payment</td><td>{invoice_no, total}</td></tr>
+    <tr><td>GET</td><td>/sales</td><td>Daftar penjualan</td><td>filter + page</td><td>list + meta</td></tr>
+    <tr><td>POST</td><td>/sales/:id/void</td><td>Batalkan transaksi</td><td>-</td><td>sukses</td></tr>
+    <tr><td>POST</td><td>/sales/hold, GET /sales/holds</td><td>Simpan &amp; panggil keranjang</td><td>keranjang</td><td>{id, hold_no}</td></tr>
+    <tr><td>POST</td><td>/sales/receivables/:id/pay</td><td>Bayar piutang</td><td>{amount, method}</td><td>sukses</td></tr>
+    <tr><td>POST</td><td>/purchases</td><td>Simpan pembelian</td><td>items + supplier</td><td>{purchase_no, total}</td></tr>
+    <tr><td>POST</td><td>/purchases/returns</td><td>Retur pembelian</td><td>{purchase_id, items}</td><td>sukses</td></tr>
+    <tr><td>GET</td><td>/stock/movements, /stock/card, /stock/low</td><td>Data stok</td><td>filter</td><td>list/kartu</td></tr>
+    <tr><td>POST</td><td>/stock/transfers, /:id/approve|reject</td><td>Pindah stok</td><td>{to_branch_id, items}</td><td>{transfer_no}</td></tr>
+    <tr><td>POST/GET</td><td>/stock/opnames, /:id/*</td><td>Opname</td><td>data opname</td><td>sesi/items</td></tr>
+    <tr><td>POST</td><td>/cash/shifts/open, /:id/close</td><td>Shift kasir</td><td>{opening_cash}/{physical_cash}</td><td>{difference}</td></tr>
+    <tr><td>GET/POST</td><td>/cash/transactions</td><td>Transaksi kas</td><td>{type, amount, note}</td><td>list/sukses</td></tr>
+    <tr><td>GET/POST/PUT/DELETE</td><td>/promotions</td><td>Kelola promo</td><td>data promo</td><td>list/detail/sukses</td></tr>
+    <tr><td>GET</td><td>/reports/dashboard</td><td>Data dashboard</td><td>-</td><td>summary + charts</td></tr>
+    <tr><td>GET</td><td>/reports/sales|purchases|cash|stock|debts|monthly</td><td>Laporan</td><td>period + breakdown</td><td>{summary, rows}</td></tr>
+    <tr><td>GET</td><td>/barcode/labels, /barcode/scan/:code</td><td>Barcode</td><td>product_ids / code</td><td>labels/produk</td></tr>
+  </table>
+
+  <h3>12.2 Contoh Request &amp; Response</h3>
+  <h4>Login</h4>
+  <pre>POST /api/auth/login
+{
+  "username": "admin",
+  "password": "password123"
+}</pre>
+  <pre>{
+  "success": true,
+  "message": "Login berhasil",
+  "data": {
+    "token": "eyJhbGciOi...",
+    "user": { "id": 1, "username": "admin", "role_name": "Super Admin" }
+  }
+}</pre>
+
+  <h4>Transaksi Kasir</h4>
+  <pre>POST /api/sales
+{
+  "items": [ { "product_id": 1, "unit_id": 1, "qty": 2, "price": 5000 } ],
+  "payment_method": "cash",
+  "total_paid": 10000
+}</pre>
+  <pre>{
+  "success": true,
+  "message": "Transaksi berhasil",
+  "data": { "id": 10, "invoice_no": "INV-20260805-0001", "total": 10000 }
+}</pre>
+</section>
+
+<!-- ============ 13. BUSINESS RULES ============ -->
+<section id="rules">
+  <h2><span class="num">13</span>Business Rules</h2>
+  <div class="plain"><span class="plain-label">Intinya</span><p>Aturan-aturan penting yang dipatuhi sistem secara otomatis.</p></div>
+  <table>
+    <tr><th>#</th><th>Aturan (bahasa sederhana)</th></tr>
+    <tr><td>1</td><td>Stok disimpan dalam satuan dasar; semua satuan lain dikonversi otomatis.</td></tr>
+    <tr><td>2</td><td>Stok tidak boleh minus — sistem menolak jika stok kurang.</td></tr>
+    <tr><td>3</td><td>Setiap pergerakan stok selalu dicatat (kapan, siapa, berapa).</td></tr>
+    <tr><td>4</td><td>Promo beli gratis menambahkan barang gratis otomatis (tidak mengurangi stok).</td></tr>
+    <tr><td>5</td><td>Diskon promo hanya berlaku untuk barang yang sesuai sasaran.</td></tr>
+    <tr><td>6</td><td>Kasir hanya bisa mengubah harga jika diberi izin.</td></tr>
+    <tr><td>7</td><td>Penjualan hutang wajib memilih pelanggan dan tanggal jatuh tempo.</td></tr>
+    <tr><td>8</td><td>Pembatalan transaksi mengembalikan stok dan menutup piutang.</td></tr>
+    <tr><td>9</td><td>Retur tidak boleh melebihi jumlah yang dibeli.</td></tr>
+    <tr><td>10</td><td>Pindah barang antar cabang butuh persetujuan; stok pindah hanya setelah disetujui.</td></tr>
+    <tr><td>11</td><td>Opname: buka → kirim → setujui/tolak; input jumlah hanya saat sesi masih terbuka.</td></tr>
+    <tr><td>12</td><td>Kasir hanya boleh punya satu shift terbuka dalam satu cabang.</td></tr>
+    <tr><td>13</td><td>Saat shift ditutup, sistem menghitung perkiraan kas dan selisihnya.</td></tr>
+    <tr><td>14</td><td>Nomor dokumen berurutan per hari (contoh: INV-20260805-0001).</td></tr>
+    <tr><td>15</td><td>Data dasar yang "dihapus" hanya dinonaktifkan, tidak hilang permanen.</td></tr>
+    <tr><td>16</td><td>Setiap tindakan penting dicatat (siapa melakukan apa, kapan).</td></tr>
+    <tr><td>17</td><td>Hak akses per menu: lihat / tambah / ubah / hapus; Super Admin bebas.</td></tr>
+    <tr><td>18</td><td>Hutang/piutang berstatus: belum lunas → sebagian → lunas.</td></tr>
+    <tr><td>19</td><td>Stok dianggap menipis jika jumlahnya ≤ stok minimum.</td></tr>
+  </table>
+</section>
+
+<!-- ============ 14. ERROR HANDLING ============ -->
+<section id="error">
+  <h2><span class="num">14</span>Error Handling</h2>
+  <div class="plain"><span class="plain-label">Intinya</span><p>Saat terjadi masalah, sistem menampilkan pesan yang jelas. Ini cara sistem menanganinya.</p></div>
+  <table>
+    <tr><th>Jenis Error</th><th>Contoh</th><th>Penanganan</th></tr>
+    <tr><td>Error Login</td><td>Nama/kata sandi salah, akun nonaktif</td><td>Muncul pesan kesalahan</td></tr>
+    <tr><td>Error Validasi</td><td>Kolom wajib kosong, format salah</td><td>Pesan per kolom di form</td></tr>
+    <tr><td>Error API</td><td>Halaman/layanan tidak ditemukan</td><td>Pesan standar dari sistem</td></tr>
+    <tr><td>Error Database</td><td>Data duplikat, data sedang dipakai</td><td>Pesan yang mudah dipahami</td></tr>
+    <tr><td>Error Permission</td><td>Mengakses menu tanpa izin</td><td>Ditolak dengan pesan 401/403</td></tr>
+    <tr><td>Error Upload</td><td>File terlalu besar / format salah</td><td>Pesan upload gagal</td></tr>
+    <tr><td>Error Stok</td><td>Stok tidak cukup</td><td>Pesan berisi jumlah stok yang ada</td></tr>
+  </table>
+  <div class="callout note"><strong>Catatan</strong>Jika tiket masuk kedaluwarsa (401), aplikasi otomatis keluar dan kembali ke halaman Login.</div>
+</section>
+
+<!-- ============ 15. TROUBLESHOOTING ============ -->
+<section id="troubleshooting">
+  <h2><span class="num">15</span>Troubleshooting</h2>
+  <div class="plain"><span class="plain-label">Intinya</span><p>Masalah umum dan cara mengatasinya — mulai dari yang paling sering terjadi.</p></div>
+  <table>
+    <tr><th>Masalah</th><th>Penyebab</th><th>Solusi</th></tr>
+    <tr><td>Halaman tidak bisa dibuka</td><td>Server tidak menyala</td><td>Jalankan backend &amp; frontend; cek alamat <code>/api/health</code></td></tr>
+    <tr><td>Login gagal</td><td>Kata sandi salah / akun nonaktif</td><td>Minta admin reset kata sandi; pastikan akun aktif</td></tr>
+    <tr><td>Keluar sendiri / login ulang</td><td>Tiket masuk kedaluwarsa (12 jam)</td><td>Login ulang; sistem biasanya memperbarui otomatis</td></tr>
+    <tr><td>Scan barcode tidak ketemu</td><td>Barcode belum terdaftar</td><td>Buat barcode di menu Barang, atau tambah barang baru</td></tr>
+    <tr><td>Kamera scan tidak muncul</td><td>Browser belum diberi izin kamera</td><td>Izinkan kamera; akses lewat localhost/HTTPS</td></tr>
+    <tr><td>Stok tidak cukup</td><td>Barang memang tinggal sedikit</td><td>Kurangi jumlah, atau isi stok via Pembelian</td></tr>
+    <tr><td>Data duplikat saat simpan</td><td>Kode/nama/barcode sudah dipakai</td><td>Periksa nilai unik; pakai kode otomatis</td></tr>
+    <tr><td>Transfer tidak bisa disetujui</td><td>Stok cabang asal kurang</td><td>Isi stok asal dulu, atau tolak permintaan</td></tr>
+    <tr><td>Laporan kosong</td><td>Periode/filter tidak cocok</td><td>Cek rentang tanggal dan data transaksi</td></tr>
+    <tr><td>Upload foto gagal</td><td>File lebih dari 2 MB / format salah</td><td>Pakai JPG/PNG/WEBP di bawah 2 MB</td></tr>
+    <tr><td>Export CSV berantakan di Excel</td><td>Masalah encoding</td><td>Buka dengan UTF-8; file sudah siap</td></tr>
+  </table>
+</section>
+
+<!-- ============ 16. FAQ ============ -->
+<section id="faq">
+  <h2><span class="num">16</span>FAQ</h2>
+  <div class="plain"><span class="plain-label">Intinya</span><p>Pertanyaan yang sering diajukan pengguna, dengan jawaban sederhana.</p></div>
+  <h3>Bagaimana cara menambah barang baru?</h3>
+  <p>Buka menu Barang → Tambah Barang → isi data → Simpan. Stok awal 0 di semua cabang; isi stok lewat menu Pembelian atau penyesuaian stok.</p>
+  <h3>Apa itu satuan bertingkat?</h3>
+  <p>Barang bisa punya beberapa satuan (pcs/lusin/dus) dengan nilai konversi. Contoh: 1 dus = 12 lusin = 144 pcs. Menjual dalam satuan apa pun otomatis dihitung ke satuan dasar.</p>
+  <h3>Bagaimana promo beli gratis bekerja?</h3>
+  <p>Jika promo aktif (misal "Beli 2 Gratis 1"), sistem otomatis menambahkan barang gratis ke keranjang. Barang gratis tidak mengurangi stok dan nilainya 0.</p>
+  <h3>Apakah transaksi yang sudah selesai bisa dibatalkan?</h3>
+  <p>Bisa, lewat tombol Void di Riwayat Penjualan. Stok kembali dan piutang ditutup. Tindakan ini tidak bisa dibatalkan lagi.</p>
+  <h3>Bagaimana cara mencatat penjualan hutang?</h3>
+  <p>Di layar pembayaran POS, pilih cara bayar Hutang, pilih pelanggan, isi tanggal jatuh tempo. Piutang tercatat dan bisa dibayar sebagian nanti.</p>
+  <h3>Kapan stok dianggap menipis?</h3>
+  <p>Ketika jumlah stok ≤ stok minimum barang. Terlihat di Dashboard dan menu Stok (tab Stok Menipis).</p>
+  <h3>Apakah aplikasi bisa dipakai tanpa internet?</h3>
+  <p>Tidak. Aplikasi butuh koneksi ke server dan database. Untuk kasir, pastikan jaringan lokal stabil.</p>
+  <h3>Siapa yang bisa melihat laporan?</h3>
+  <p>Semua jenis pengguna bisa melihat laporan. Admin pusat melihat semua cabang; pengguna cabang hanya cabangnya sendiri.</p>
+</section>
+
+<!-- ============ 17. BEST PRACTICE ============ -->
+<section id="best-practice">
+  <h2><span class="num">17</span>Best Practice</h2>
+  <div class="plain"><span class="plain-label">Intinya</span><p>Kebiasaan baik agar penggunaan LunaPOS aman dan rapi.</p></div>
+  <ul>
+    <li><strong>Buka shift dulu sebelum melayani</strong> agar uang kas tercatat dari awal.</li>
+    <li><strong>Tutup shift tepat waktu</strong> dan catat uang fisik di laci.</li>
+    <li><strong>Jaga stok minimum</strong> setiap barang agar peringatan akurat.</li>
+    <li><strong>Lakukan stok opname berkala</strong> (misal tiap bulan) dan setujui selisihnya.</li>
+    <li><strong>Pakai barcode standar</strong> (EAN-13) agar kompatibel dengan semua scanner.</li>
+    <li><strong>Pisahkan peran dengan ketat</strong>: kasir hanya melayani, manager yang menyetujui.</li>
+    <li><strong>Ganti kata sandi default</strong> segera setelah user pertama kali login.</li>
+    <li><strong>Backup database rutin</strong> sebelum melakukan perubahan besar.</li>
+    <li><strong>Cek laporan harian</strong> untuk mendeteksi kejanggalan penjualan/kas.</li>
+    <li><strong>Catat setiap perubahan data</strong> barang/supplier agar konsisten.</li>
+  </ul>
+</section>
+
+<!-- ============ 18. LAMPIRAN ============ -->
+<section id="lampiran">
+  <h2><span class="num">18</span>Lampiran</h2>
+
+  <h3>18.1 Pengaturan Lingkungan (.env backend)</h3>
+  <table>
+    <tr><th>Variabel</th><th>Standar</th><th>Keterangan</th></tr>
+    <tr><td>PORT</td><td>5000</td><td>Port layanan</td></tr>
+    <tr><td>DB_HOST</td><td>127.0.0.1</td><td>Alamat database</td></tr>
+    <tr><td>DB_PORT</td><td>3306</td><td>Port database</td></tr>
+    <tr><td>DB_USER</td><td>root</td><td>Nama pengguna database</td></tr>
+    <tr><td>DB_PASSWORD</td><td>(kosong)</td><td>Kata sandi database</td></tr>
+    <tr><td>DB_NAME</td><td>lunapos</td><td>Nama database</td></tr>
+    <tr><td>JWT_SECRET</td><td>(wajib diisi)</td><td>Kunci rahasia tiket masuk</td></tr>
+    <tr><td>JWT_EXPIRES_IN</td><td>12h</td><td>Masa berlaku tiket</td></tr>
+    <tr><td>UPLOAD_DIR</td><td>uploads</td><td>Folder penyimpanan file</td></tr>
+    <tr><td>MAX_FILE_SIZE</td><td>2097152 (2MB)</td><td>Batas ukuran file</td></tr>
+  </table>
+
+  <h3>18.2 Akun Contoh (Demo)</h3>
+  <table>
+    <tr><th>Username</th><th>Jenis</th><th>Cabang</th><th>Password</th></tr>
+    <tr><td>admin</td><td>Super Admin</td><td>Pusat</td><td>password123</td></tr>
+    <tr><td>pusat</td><td>Admin Pusat</td><td>Pusat</td><td>password123</td></tr>
+    <tr><td>manager</td><td>Manager Cabang</td><td>Jakarta</td><td>password123</td></tr>
+    <tr><td>kasir1</td><td>Kasir</td><td>Jakarta</td><td>password123</td></tr>
+    <tr><td>kasir2</td><td>Kasir</td><td>Bandung</td><td>password123</td></tr>
+    <tr><td>gudang</td><td>Gudang</td><td>Jakarta</td><td>password123</td></tr>
+  </table>
+
+  <h3>18.3 Referensi</h3>
+  <ul>
+    <li><a href="DOKUMENTASI-SISTEM.md">DOKUMENTASI-SISTEM.md</a> — analisis sistem lengkap (27 bagian)</li>
+    <li><a href="LAMPIRAN-REFERENSI.md">LAMPIRAN-REFERENSI.md</a> — referensi teknis ringkas</li>
+    <li><code>database/schema.sql</code> — struktur database</li>
+    <li><code>database/seed.sql</code> — data awal</li>
+    <li><code>backend/scripts/smoke-test.js</code> — tes otomatis layanan</li>
+  </ul>
+
+  <div class="callout tips"><strong>Tips Ekspor</strong>Gunakan Ctrl+P (Print) di browser, pilih "Save as PDF", atur ukuran A4, dan aktifkan "Background graphics" agar cover berwarna ikut tercetak.</div>
+</section>
+
+<footer class="doc-footer">
+  <strong>LunaPOS</strong> — Buku Panduan &amp; Dokumentasi Sistem v1.0<br>
+  Doc LP-DOC-2026-001 · © 2026 Tim Dokumentasi
+  <small>Disusun berdasarkan analisis source code · Beberapa informasi mengandung asumsi yang ditandai</small>
+</footer>
+
+</div>
+</body>
+</html>
