@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
 <style>
   :root {
     --navy-900: #172554;
@@ -99,6 +100,71 @@
   }
   pre code { background: none; color: inherit; padding: 0; font-size: inherit; }
 
+  /* ===== DIAGRAM MERMAID ===== */
+  /* ===== SCREENSHOT GAMBAR ===== */
+  figure.screenshot {
+    margin: 20px 0 28px;
+    background: #fff;
+    border: 1px solid var(--ink-200);
+    border-radius: var(--radius);
+    padding: 14px;
+    box-shadow: var(--shadow-sm);
+  }
+  figure.screenshot img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 6px;
+    border: 1px solid var(--ink-200);
+  }
+  figure.screenshot figcaption {
+    margin-top: 10px;
+    padding-top: 8px;
+    border-top: 1px solid var(--ink-100);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.78rem;
+    color: var(--ink-500);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    text-align: center;
+  }
+  .screenshot-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+    margin: 22px 0;
+  }
+  .screenshot-grid figure.screenshot { margin: 0; }
+  .diagram-wrap {
+    background: #fff;
+    border: 1px solid var(--ink-200);
+    border-radius: var(--radius);
+    padding: 22px;
+    margin: 18px 0 26px;
+    box-shadow: var(--shadow-sm);
+    overflow-x: auto;
+  }
+  .diagram-wrap .mermaid {
+    display: flex;
+    justify-content: center;
+    font-family: 'Inter', sans-serif;
+  }
+  .diagram-wrap .mermaid svg {
+    max-width: 100%;
+    height: auto;
+  }
+  .diagram-fallback {
+    display: none;
+    white-space: pre-wrap;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.82rem;
+    background: var(--navy-900);
+    color: #cbd5e1;
+    padding: 16px;
+    border-radius: var(--radius);
+  }
+  .mermaid-error + .diagram-fallback { display: block; }
+
   table {
     width: 100%;
     border-collapse: separate;
@@ -168,10 +234,6 @@
     color: var(--ink-500);
     font-size: 0.92rem;
     margin: 18px 0 26px;
-  }
-  .screenshot::before {
-    content: "📸"; display: block;
-    font-size: 2.4rem; margin-bottom: 6px;
   }
   .screenshot .label {
     display: block;
@@ -610,7 +672,22 @@
   </ul>
 
   <h3>2.4 Alur Kerja Singkat</h3>
-  <pre>flowchart TD
+  <div class="diagram-wrap">
+    <pre class="mermaid">flowchart TD
+    A["Login"] --> B["Dashboard"]
+    B --> C["Kasir POS"]
+    B --> D["Data Barang, Supplier, Customer"]
+    C --> E["Penjualan"]
+    E --> F{"Metode Bayar"}
+    F --> G["Cash / Transfer / QRIS"]
+    F --> H["Hutang - Piutang"]
+    D --> I["Pembelian"]
+    I --> J["Stok Masuk"]
+    D --> K["Stok Opname &amp; Mutasi"]
+    K --> L["Persetujuan Manager"]
+    E &amp; I &amp; K --> M["Kas &amp; Shift"]
+    M --> N["Laporan &amp; Dashboard"]</pre>
+    <div class="diagram-fallback">flowchart TD
     A[Login] --> B[Dashboard]
     B --> C[Kasir POS]
     B --> D[Data Barang, Supplier, Customer]
@@ -623,8 +700,12 @@
     D --> K[Stok Opname & Mutasi]
     K --> L[Persetujuan Manager]
     E & I & K --> M[Kas & Shift]
-    M --> N[Laporan & Dashboard]</pre>
-  <div class="screenshot"><span class="label">Gambar — Dashboard</span>Halaman pertama setelah login: ringkasan penjualan, stok, dan grafik.</div>
+    M --> N[Laporan & Dashboard]</div>
+  </div>
+  <figure class="screenshot">
+    <img src="assets/screenshots/02-dashboard.png" alt="Tampilan Dashboard LunaPOS - ringkasan penjualan, statistik, dan grafik">
+    <figcaption>Gambar — Tampilan Dashboard (ringkasan penjualan, statistik, dan grafik)</figcaption>
+  </figure>
 </section>
 
 <!-- ============ 3. PERSYARATAN SISTEM ============ -->
@@ -684,7 +765,10 @@
     <li>Klik tombol <strong>Masuk</strong>.</li>
     <li>Jika berhasil, muncul ucapan selamat datang dan Anda diarahkan ke Dashboard.</li>
   </ol>
-  <div class="screenshot"><span class="label">Gambar — Halaman Login</span>Form isi nama pengguna &amp; kata sandi, dengan logo di sebelah kiri.</div>
+  <figure class="screenshot">
+    <img src="assets/screenshots/01-login.png" alt="Tampilan Halaman Login - form nama pengguna dan kata sandi">
+    <figcaption>Gambar — Halaman Login (form nama pengguna &amp; kata sandi, panel branding di sebelah kiri)</figcaption>
+  </figure>
 
   <h3>4.2 Cara Keluar (Logout)</h3>
   <ol>
@@ -777,7 +861,10 @@
     <tr><td>Barcode tidak ditemukan</td><td>Cek barcode barang, atau tambahkan barang baru</td></tr>
     <tr><td>Kamera tidak bisa dipakai</td><td>Izinkan akses kamera di browser; pakai koneksi aman (HTTPS/localhost)</td></tr>
   </table>
-  <div class="screenshot"><span class="label">Gambar — Kasir POS</span>Layar kasir: keranjang belanja di kanan, daftar barang di kiri.</div>
+  <figure class="screenshot">
+    <img src="assets/screenshots/03-pos.png" alt="Tampilan Kasir POS - keranjang belanja dan scanner barcode">
+    <figcaption>Gambar — Layar Kasir POS (keranjang belanja dan pemindai barcode)</figcaption>
+  </figure>
 
   <h3>5.2 Barang (Produk)</h3>
   <h4>Tujuan</h4><p>Mendaftarkan dan mengelola semua barang yang dijual.</p>
@@ -1013,7 +1100,20 @@
     <tr><td>Cetak Barcode</td><td>Cetak label</td><td>Daftar + pratinjau</td><td>Cari</td><td>Ya (pilih)</td><td>-</td><td>-</td></tr>
     <tr><td>Profile</td><td>Ganti kata sandi</td><td>Form</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
   </table>
-  <div class="screenshot"><span class="label">Gambar — Halaman Laporan</span>Contoh layar laporan dengan tab dan grafik.</div>
+  <figure class="screenshot">
+    <img src="assets/screenshots/17-reports.png" alt="Tampilan Halaman Laporan dengan tab dan grafik">
+    <figcaption>Gambar — Halaman Laporan (tab Penjualan/Pembelian/Kas/Stok/Hutang-Piutang/Bulanan dengan grafik)</figcaption>
+  </figure>
+  <div class="screenshot-grid" style="margin: 24px 0 8px;">
+    <figure class="screenshot"><img src="assets/screenshots/04-products.png" alt="Halaman Barang"><figcaption>Barang</figcaption></figure>
+    <figure class="screenshot"><img src="assets/screenshots/06-suppliers.png" alt="Halaman Supplier"><figcaption>Supplier</figcaption></figure>
+    <figure class="screenshot"><img src="assets/screenshots/07-customers.png" alt="Halaman Customer"><figcaption>Customer</figcaption></figure>
+    <figure class="screenshot"><img src="assets/screenshots/09-users.png" alt="Halaman User & Hak Akses"><figcaption>User &amp; Hak Akses</figcaption></figure>
+    <figure class="screenshot"><img src="assets/screenshots/10-sales.png" alt="Halaman Riwayat Penjualan"><figcaption>Riwayat Penjualan</figcaption></figure>
+    <figure class="screenshot"><img src="assets/screenshots/12-stock.png" alt="Halaman Stok & Kartu Stok"><figcaption>Stok &amp; Kartu Stok</figcaption></figure>
+    <figure class="screenshot"><img src="assets/screenshots/14-opname.png" alt="Halaman Stok Opname"><figcaption>Stok Opname</figcaption></figure>
+    <figure class="screenshot"><img src="assets/screenshots/15-cash.png" alt="Halaman Kas & Shift"><figcaption>Kas &amp; Shift</figcaption></figure>
+  </div>
 </section>
 
 <!-- ============ 7. HAK AKSES ============ -->
@@ -1049,7 +1149,21 @@
   <div class="plain"><span class="plain-label">Intinya</span><p>Gambar alur di bawah menunjukkan bagaimana proses bekerja langkah demi langkah. Cocok untuk memahami "jalan cerita" sebuah transaksi.</p></div>
 
   <h3>8.1 Alur Transaksi Kasir</h3>
-  <pre>flowchart TD
+  <div class="diagram-wrap">
+    <pre class="mermaid">flowchart TD
+    A["Scan / cari barang"] --> B["Tambah ke keranjang"]
+    B --> C{"Promo aktif?"}
+    C -- "Ya" --> D["Barang gratis / diskon otomatis"]
+    C -- "Tidak" --> E["Total normal"]
+    D --> E
+    E --> F["Pilih cara bayar"]
+    F --> G["Isi uang / data hutang"]
+    G --> H["Cek stok"]
+    H -- "Kurang" --> I["Error: stok tidak cukup"]
+    H -- "Cukup" --> J["Simpan transaksi + kurangi stok"]
+    J --> K["Catat kas / piutang"]
+    K --> L["Cetak struk"]</pre>
+    <div class="diagram-fallback">flowchart TD
     A[Scan / cari barang] --> B[Tambah ke keranjang]
     B --> C{Promo aktif?}
     C -- Ya --> D[Barang gratis / diskon otomatis]
@@ -1061,20 +1175,44 @@
     H -- Kurang --> I[Error: stok tidak cukup]
     H -- Cukup --> J[Simpan transaksi + kurangi stok]
     J --> K[Catat kas / piutang]
-    K --> L[Cetak struk]</pre>
+    K --> L[Cetak struk]</div>
+  </div>
 
   <h3>8.2 Alur Pindah Barang Antar Cabang</h3>
-  <pre>flowchart TD
+  <div class="diagram-wrap">
+    <pre class="mermaid">flowchart TD
+    A["Buat permintaan pindah barang"] --> B["Status: menunggu"]
+    B --> C{"Persetujuan"}
+    C -- "Setujui" --> D["Cek stok cabang asal"]
+    D -- "Cukup" --> E["Stok keluar + masuk"]
+    E --> F["Status: disetujui"]
+    D -- "Kurang" --> G["Persetujuan gagal"]
+    C -- "Tolak" --> H["Status: ditolak"]</pre>
+    <div class="diagram-fallback">flowchart TD
     A[Buat permintaan pindah barang] --> B[Status: menunggu]
     B --> C{Persetujuan}
     C -- Setujui --> D[Cek stok cabang asal]
     D -- Cukup --> E[Stok keluar + masuk]
     E --> F[Status: disetujui]
     D -- Kurang --> G[Persetujuan gagal]
-    C -- Tolak --> H[Status: ditolak]</pre>
+    C -- Tolak --> H[Status: ditolak]</div>
+  </div>
 
   <h3>8.3 Alur Login</h3>
-  <pre>sequenceDiagram
+  <div class="diagram-wrap">
+    <pre class="mermaid">sequenceDiagram
+    participant U as Pengguna
+    participant F as Tampilan
+    participant A as Server
+    participant D as Database
+    U->>F: Isi nama &amp; kata sandi
+    F->>A: Kirim data login
+    A->>D: Cari data pengguna
+    D-->>A: Data ditemukan
+    A->>A: Cocokkan kata sandi + buat tiket masuk
+    A-->>F: Beri tiket + data pengguna
+    F-->>U: Masuk ke Dashboard</pre>
+    <div class="diagram-fallback">sequenceDiagram
     participant U as Pengguna
     participant F as Tampilan
     participant A as Server
@@ -1085,7 +1223,8 @@
     D-->>A: Data ditemukan
     A->>A: Cocokkan kata sandi + buat tiket masuk
     A-->>F: Beri tiket + data pengguna
-    F-->>U: Masuk ke Dashboard</pre>
+    F-->>U: Masuk ke Dashboard</div>
+  </div>
 </section>
 
 <!-- ============ 9. TECHNICAL DOCUMENTATION ============ -->
@@ -1094,21 +1233,38 @@
   <div class="plain"><span class="plain-label">Untuk Tim Teknis</span><p>Bagian ini khusus untuk programmer dan teknisi. Pengguna umum boleh melewatinya.</p></div>
 
   <h3>9.1 Arsitektur Sistem</h3>
-  <pre>flowchart LR
-    subgraph Client [React SPA :5173]
-        UI[Komponen] --> STORE[Zustand]
-        STORE --> API[Axios client]
+    <div class="diagram-wrap">
+    <pre class="mermaid">flowchart LR
+    subgraph Client ["React SPA :5173"]
+      UI["Komponen"] --> STORE["Zustand"]
+      STORE --> API["Axios client"]
     end
-    subgraph Server [Express API :5000]
-        API --> MID[Middleware auth/rate-limit]
-        MID --> ROUTES[Routes]
-        ROUTES --> CTRL[Controllers]
-        CTRL --> SVC[services/promo]
-        CTRL --> HELP[utils/helpers]
-        SVC --> DB[(MySQL)]
-        HELP --> DB
+    subgraph Server ["Express API :5000"]
+      API --> MID["Middleware auth/rate-limit"]
+      MID --> ROUTES["Routes"]
+      ROUTES --> CTRL["Controllers"]
+      CTRL --> SVC["services/promo"]
+      CTRL --> HELP["utils/helpers"]
+      SVC --> DB[("MySQL")]
+      HELP --> DB
     end
     DB --> API</pre>
+    <div class="diagram-fallback">flowchart LR
+    subgraph Client [React SPA :5173]
+      UI[Komponen] --> STORE[Zustand]
+      STORE --> API[Axios client]
+    end
+    subgraph Server [Express API :5000]
+      API --> MID[Middleware auth/rate-limit]
+      MID --> ROUTES[Routes]
+      ROUTES --> CTRL[Controllers]
+      CTRL --> SVC[services/promo]
+      CTRL --> HELP[utils/helpers]
+      SVC --> DB[(MySQL)]
+      HELP --> DB
+    end
+    DB --> API</div>
+    </div>
 
   <h3>9.2 Frontend</h3>
   <ul>
@@ -1215,7 +1371,8 @@
   <div class="plain"><span class="plain-label">Untuk Tim Teknis</span><p>Database adalah "gudang data" sistem. Bagian ini menjelaskan tabel-tabel dan hubungannya.</p></div>
 
   <h3>11.1 Entity &amp; Relasi (ERD)</h3>
-  <pre>erDiagram
+  <div class="diagram-wrap">
+    <pre class="mermaid">erDiagram
     ROLES ||--o{ USERS : "memiliki"
     ROLES ||--o{ PERMISSIONS : ""
     BRANCHES ||--o{ USERS : ""
@@ -1246,6 +1403,38 @@
     BRANCHES ||--o{ SHIFTS : ""
     SHIFTS ||--o{ CASH_TRANSACTIONS : ""
     PROMOTIONS ||--o{ PROMO_ITEMS : ""</pre>
+    <div class="diagram-fallback">erDiagram
+    ROLES ||--o{ USERS : "memiliki"
+    ROLES ||--o{ PERMISSIONS : ""
+    BRANCHES ||--o{ USERS : ""
+    BRANCHES ||--o{ SALES : ""
+    USERS ||--o{ SALES : "kasir"
+    CUSTOMERS ||--o{ SALES : ""
+    SALES ||--o{ SALE_ITEMS : ""
+    SALES ||--o{ RECEIVABLES : ""
+    SALES ||--o{ SALE_HOLDS : ""
+    PRODUCTS ||--o{ PRODUCT_UNITS : ""
+    PRODUCTS ||--o{ PRODUCT_STOCKS : ""
+    PRODUCTS ||--o{ SALE_ITEMS : ""
+    CATEGORIES ||--o{ PRODUCTS : ""
+    BRANDS ||--o{ PRODUCTS : ""
+    UNITS ||--o{ PRODUCTS : ""
+    BRANCHES ||--o{ PURCHASES : ""
+    SUPPLIERS ||--o{ PURCHASES : ""
+    PURCHASES ||--o{ PURCHASE_ITEMS : ""
+    PURCHASES ||--o{ DEBTS : ""
+    DEBTS ||--o{ DEBT_PAYMENTS : ""
+    PURCHASES ||--o{ PURCHASE_RETURNS : ""
+    PURCHASE_RETURNS ||--o{ PURCHASE_RETURN_ITEMS : ""
+    PRODUCTS ||--o{ STOCK_MOVEMENTS : ""
+    BRANCHES ||--o{ STOCK_MOVEMENTS : ""
+    BRANCHES ||--o{ STOCK_TRANSFERS : ""
+    STOCK_TRANSFERS ||--o{ STOCK_TRANSFER_ITEMS : ""
+    STOCK_OPNAMES ||--o{ STOCK_OPNAME_ITEMS : ""
+    BRANCHES ||--o{ SHIFTS : ""
+    SHIFTS ||--o{ CASH_TRANSACTIONS : ""
+    PROMOTIONS ||--o{ PROMO_ITEMS : ""</div>
+  </div>
 
   <h3>11.2 Tabel Utama</h3>
   <table>
@@ -1495,4 +1684,38 @@
 
 </div>
 </body>
+<script>
+  mermaid.initialize({
+    startOnLoad: false,
+    theme: 'default',
+    themeVariables: {
+      background: '#ffffff',
+      primaryColor: '#dbeafe',
+      primaryTextColor: '#1e3a8a',
+      primaryBorderColor: '#3b82f6',
+      lineColor: '#3b82f6',
+      secondaryColor: '#eff6ff',
+      tertiaryColor: '#f1f5f9',
+      edgeLabelBackground: '#ffffff',
+      clusterBkg: '#f8fafc',
+      clusterBorder: '#93c5fd',
+      fontFamily: 'Inter, sans-serif',
+      fontSize: '14px',
+    },
+    flowchart: { htmlLabels: true, curve: 'basis', padding: 12 },
+    sequence: { useMaxWidth: true, actorMargin: 60 },
+  });
+  window.addEventListener('DOMContentLoaded', async () => {
+    const blocks = document.querySelectorAll('pre.mermaid');
+    for (const el of blocks) {
+      try {
+        const { svg } = await mermaid.render('mermaid-' + Math.random().toString(36).slice(2, 9), el.textContent);
+        el.outerHTML = svg;
+      } catch (e) {
+        console.error('Mermaid render error:', e);
+        el.classList.add('mermaid-error');
+      }
+    }
+  });
+</script>
 </html>

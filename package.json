@@ -11,6 +11,7 @@
     "install:all": "npm install --prefix backend && npm install --prefix frontend && npm install"
   },
   "devDependencies": {
-    "concurrently": "^9.1.0"
+    "concurrently": "^9.1.0",
+    "playwright": "^1.62.1"
   }
 }
