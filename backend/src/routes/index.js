@@ -11,6 +11,7 @@ const purchasesCtrl = require('../controllers/purchases.controller');
 const stockCtrl = require('../controllers/stock.controller');
 const batchesCtrl = require('../controllers/batches.controller');
 const exportsCtrl = require('../controllers/exports.controller');
+const backupCtrl = require('../controllers/backup.controller');
 const cashCtrl = require('../controllers/cash.controller');
 const promotionsCtrl = require('../controllers/promotions.controller');
 const reportsCtrl = require('../controllers/reports.controller');
@@ -166,6 +167,14 @@ router.get('/reports/monthly', auth, requirePerm('reports', 'view'), reportsCtrl
 /* ============ EXPORT (Excel / PDF) ============ */
 router.get('/export/report', auth, requirePerm('reports', 'view'), exportsCtrl.report);
 router.get('/export/invoice/:saleId', auth, requirePerm('sales', 'view'), exportsCtrl.invoice);
+
+/* ============ BACKUP DATABASE ============ */
+router.get('/backup/files', auth, requirePerm('backup', 'view'), backupCtrl.files);
+router.get('/backup/info', auth, requirePerm('backup', 'view'), backupCtrl.info);
+router.post('/backup', auth, requirePerm('backup', 'create'), backupCtrl.create);
+router.get('/backup/download/:filename', auth, requirePerm('backup', 'view'), backupCtrl.download);
+router.post('/backup/restore', auth, requirePerm('backup', 'edit'), backupCtrl.restore);
+router.delete('/backup/:filename', auth, requirePerm('backup', 'delete'), backupCtrl.remove);
 
 /* ============ BARCODE ============ */
 router.get('/barcode/labels', auth, requirePerm('barcode', 'view'), barcodeCtrl.labels);

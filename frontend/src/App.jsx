@@ -22,6 +22,7 @@ import CashPage from './pages/CashPage';
 import PromotionsPage from './pages/PromotionsPage';
 import ReportsPage from './pages/ReportsPage';
 import BarcodePage from './pages/BarcodePage';
+import BackupPage from './pages/BackupPage';
 import ProfilePage from './pages/ProfilePage';
 
 export default function App() {
@@ -55,6 +56,7 @@ export default function App() {
           <Route path="/promotions" element={<PromotionsPage />} />
           <Route path="/reports" element={<ReportsPage />} />
           <Route path="/barcode" element={<BarcodePage />} />
+          <Route path="/backup" element={<BackupPage />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Route>

@@ -23,12 +23,12 @@ const schema = z.object({
   phone: z.string().optional(),
 });
 
-const MENUS = ['dashboard', 'products', 'categories', 'brands', 'units', 'suppliers', 'customers', 'branches', 'users', 'sales', 'purchases', 'returns', 'transfers', 'opname', 'stock', 'cash', 'shifts', 'promotions', 'reports', 'barcode'];
+const MENUS = ['dashboard', 'products', 'categories', 'brands', 'units', 'suppliers', 'customers', 'branches', 'users', 'sales', 'purchases', 'returns', 'transfers', 'opname', 'stock', 'cash', 'shifts', 'promotions', 'reports', 'barcode', 'backup'];
 const MENU_LABELS = {
   dashboard: 'Dashboard', products: 'Barang', categories: 'Kategori', brands: 'Merk', units: 'Satuan',
   suppliers: 'Supplier', customers: 'Customer', branches: 'Cabang', users: 'User', sales: 'Penjualan / POS',
   purchases: 'Pembelian', returns: 'Retur', transfers: 'Mutasi', opname: 'Stok Opname', stock: 'Stok',
-  cash: 'Kas', shifts: 'Shift', promotions: 'Promo', reports: 'Laporan', barcode: 'Barcode',
+  cash: 'Kas', shifts: 'Shift', promotions: 'Promo', reports: 'Laporan', barcode: 'Barcode', backup: 'Backup Database',
 };
 
 export default function UsersPage() {

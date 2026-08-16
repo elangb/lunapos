@@ -151,6 +151,15 @@ export const exportApi = {
   invoice: (saleId) => client.get(`/export/invoice/${saleId}`, { responseType: 'blob' }).then((r) => r.data),
 };
 
+export const backupApi = {
+  files: () => client.get('/backup/files').then((r) => r.data),
+  info: () => client.get('/backup/info').then((r) => r.data),
+  create: () => client.post('/backup').then((r) => r.data),
+  download: (filename) => client.get(`/backup/download/${encodeURIComponent(filename)}`, { responseType: 'blob' }).then((r) => r.data),
+  restore: (filename) => client.post('/backup/restore', { filename }).then((r) => r.data),
+  remove: (filename) => client.delete(`/backup/${encodeURIComponent(filename)}`).then((r) => r.data),
+};
+
 export const barcodeApi = {
   labels: (productIds, withUnits = true) => client.get(`/barcode/labels?product_ids=${productIds.join(',')}&with_units=${withUnits ? 1 : 0}`).then((r) => r.data),
   scan: (code) => client.get(`/barcode/scan/${encodeURIComponent(code)}`).then((r) => r.data),

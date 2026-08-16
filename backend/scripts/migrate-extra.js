@@ -70,7 +70,17 @@ async function run() {
     console.log('+ table product_batches');
   }
 
-  // 4. Seed data demo (hanya jika produk dengan id tsb ada & belum ada varian/batch)
+  // 4. Permission menu 'backup' (role 1 & 2 full, role 3 view, lainnya tidak)
+  const permCount = await conn.query("SELECT COUNT(*) AS c FROM permissions WHERE menu = 'backup'");
+  if (permCount[0][0].c === 0) {
+    await conn.query(`INSERT INTO permissions (role_id, menu, can_view, can_create, can_edit, can_delete) VALUES
+      (1, 'backup', 1, 1, 1, 1),
+      (2, 'backup', 1, 1, 1, 1),
+      (3, 'backup', 1, 0, 0, 0)`);
+    console.log('+ permission backup (role 1,2,3)');
+  }
+
+  // 5. Seed data demo (hanya jika produk dengan id tsb ada & belum ada varian/batch)
   if (!(await has('SELECT id FROM product_variants LIMIT 1'))) {
     try {
       await conn.query(`INSERT INTO product_variants (product_id, name, sku, barcode, price_adjust, is_active) VALUES

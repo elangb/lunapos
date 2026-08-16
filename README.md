@@ -17,6 +17,7 @@ Aplikasi POS + Inventory modern multi-cabang. **React JS + Vite + Tailwind CSS**
 | **Multi-cabang** | Pusat mengelola semua cabang; kasir hanya melihat cabangnya sendiri; 5 role dengan permission per menu |
 | **Laporan** | Hari ini/kemarin/minggu/bulan/tahun/custom; per kasir/cabang/barang/kategori/customer; retail vs grosir; cash vs hutang; umur hutang & piutang (30/60/90+); bulanan & tahunan dengan grafik omzet/laba/transaksi; **export CSV, Excel (.xlsx) & PDF** + **invoice PDF per transaksi** |
 | **PWA & Offline** | Installable (manifest + service worker), cache API & aset, **mode offline**: transaksi POS disimpan di antrian lokal & otomatis tersinkron saat koneksi kembali, badge status offline/menunggu sinkron |
+| **Backup Database** | Buat backup SQL (mysqldump) sekali klik, unduh, hapus, dan **restore** database (khusus Super Admin); daftar file backup + info ukuran/tabel |
 | **Dashboard** | Omzet & laba hari ini, transaksi, hutang, piutang, stok menipis, grafik 7 hari, 12 bulan, top 10 produk, top 5 cabang |
 | **Cetak barcode** | Pilih barang → jumlah label → ukuran (58×25 / 58×40 / 100×50 mm) → preview → cetak massal |
 
@@ -127,6 +128,8 @@ GET   /reports/dashboard, /sales, /purchases, /cash, /stock, /debts, /monthly
 GET   /export/report?type=&format=xlsx|pdf   GET /export/invoice/:saleId
 GET   /batches, /batches/summary            POST /batches, PUT /batches/:id
 GET   /barcode/labels, /barcode/scan/:code
+GET   /backup/files, /backup/info           POST /backup, /backup/restore
+GET   /backup/download/:filename            DELETE /backup/:filename
 ```
 
 Semua endpoint (kecuali login/refresh) butuh header `Authorization: Bearer <token>`, dengan pagination (`page`, `limit`), pencarian (`search`), dan filter tanggal (`from`, `to`, `period`). Hak akses per menu diverifikasi middleware `requirePerm(menu, action)`.

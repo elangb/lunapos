@@ -1,7 +1,7 @@
 import { NavLink } from 'react-router-dom';
 import {
   LayoutDashboard, ShoppingCart, Package, Boxes, Truck, Users, Store, ShieldCheck,
-  Receipt, ShoppingBag, ArrowLeftRight, ClipboardList, Wallet, Percent, BarChart3, Barcode, ChevronsLeft, ChevronsRight, Zap,
+  Receipt, ShoppingBag, ArrowLeftRight, ClipboardList, Wallet, Percent, BarChart3, Barcode, ChevronsLeft, ChevronsRight, Zap, DatabaseBackup,
 } from 'lucide-react';
 import { useUiStore } from '../stores/ui';
 import { useAuthStore } from '../stores/auth';
@@ -31,6 +31,7 @@ const MENU = [
     { to: '/promotions', icon: Percent, label: 'Promo', perm: 'promotions' },
     { to: '/reports', icon: BarChart3, label: 'Laporan', perm: 'reports' },
     { to: '/barcode', icon: Barcode, label: 'Cetak Barcode', perm: 'barcode' },
+    { to: '/backup', icon: DatabaseBackup, label: 'Backup Database', perm: 'backup' },
   ]},
 ];
 
@@ -45,17 +46,17 @@ export default function Sidebar() {
 
   return (
     <aside
-      className={`${collapsed ? 'w-[68px]' : 'w-64'} shrink-0 bg-ink-950 text-ink-100 flex flex-col transition-all duration-300 border-r border-ink-800/60`}
+      className={`${collapsed ? 'w-[68px]' : 'w-64'} shrink-0 bg-white dark:bg-ink-950 text-ink-800 dark:text-ink-100 flex flex-col transition-all duration-300 border-r border-ink-100 dark:border-ink-800/60`}
     >
       {/* Brand */}
-      <div className={`flex items-center gap-2.5 h-16 px-4 border-b border-ink-800/60 ${collapsed ? 'justify-center px-0' : ''}`}>
+      <div className={`flex items-center gap-2.5 h-16 px-4 border-b border-ink-100 dark:border-ink-800/60 ${collapsed ? 'justify-center px-0' : ''}`}>
         <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary-500 to-secondary-600 flex items-center justify-center font-black text-white text-sm shrink-0 shadow-soft shadow-primary-600/30">
           LP
         </div>
         {!collapsed && (
           <div className="leading-tight">
-            <div className="font-extrabold text-lg tracking-tight">Luna<span className="text-primary-400">POS</span></div>
-            <div className="text-[10px] font-semibold text-ink-500 uppercase tracking-widest">Point of Sale</div>
+            <div className="font-extrabold text-lg tracking-tight text-ink-900 dark:text-white">Luna<span className="text-primary-500 dark:text-primary-400">POS</span></div>
+            <div className="text-[10px] font-semibold text-ink-400 dark:text-ink-500 uppercase tracking-widest">Point of Sale</div>
           </div>
         )}
       </div>
@@ -65,7 +66,7 @@ export default function Sidebar() {
         {groups.map((g) => (
           <div key={g.group}>
             {!collapsed && (
-              <div className="px-3 mb-1.5 text-[10px] font-bold text-ink-500 uppercase tracking-widest">{g.group}</div>
+              <div className="px-3 mb-1.5 text-[10px] font-bold text-ink-400 dark:text-ink-500 uppercase tracking-widest">{g.group}</div>
             )}
             <div className="space-y-0.5">
               {g.items.map((m) => (
@@ -78,7 +79,7 @@ export default function Sidebar() {
                     `group flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all duration-150 ${
                       isActive
                         ? 'bg-gradient-to-r from-primary-600 to-primary-700 text-white shadow-soft shadow-primary-600/25'
-                        : 'text-ink-400 hover:bg-ink-800/70 hover:text-white'
+                        : 'text-ink-500 dark:text-ink-400 hover:bg-ink-100 dark:hover:bg-ink-800/70 hover:text-ink-900 dark:hover:text-white'
                     } ${collapsed ? 'justify-center px-0' : ''}`
                   }
                 >
@@ -97,10 +98,10 @@ export default function Sidebar() {
       </nav>
 
       {/* Footer */}
-      <div className="border-t border-ink-800/60 p-2.5">
+      <div className="border-t border-ink-100 dark:border-ink-800/60 p-2.5">
         <button
           onClick={toggle}
-          className="w-full h-10 flex items-center justify-center gap-2 rounded-xl text-xs font-semibold text-ink-500 hover:text-white hover:bg-ink-800/70 transition-colors"
+          className="w-full h-10 flex items-center justify-center gap-2 rounded-xl text-xs font-semibold text-ink-400 dark:text-ink-500 hover:text-ink-700 dark:hover:text-white hover:bg-ink-100 dark:hover:bg-ink-800/70 transition-colors"
         >
           {collapsed ? <ChevronsRight size={16} /> : <><ChevronsLeft size={16} /> Ciutkan</>}
         </button>

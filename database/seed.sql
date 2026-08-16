@@ -12,18 +12,20 @@ INSERT INTO roles (id, name, description) VALUES
 (4, 'Kasir', 'Transaksi POS di cabang'),
 (5, 'Gudang', 'Manajemen stok & mutasi');
 
--- PERMISSIONS (menu: dashboard, products, categories, brands, units, suppliers, customers, branches, users, sales, purchases, returns, transfers, opname, stock, cash, shifts, promotions, reports, barcode)
+-- PERMISSIONS (menu: dashboard, products, categories, brands, units, suppliers, customers, branches, users, sales, purchases, returns, transfers, opname, stock, cash, shifts, promotions, reports, barcode, backup)
 INSERT INTO permissions (role_id, menu, can_view, can_create, can_edit, can_delete) VALUES
 -- Super Admin: semua full
 (1, 'dashboard',1,0,0,0),(1,'products',1,1,1,1),(1,'categories',1,1,1,1),(1,'brands',1,1,1,1),(1,'units',1,1,1,1),
 (1,'suppliers',1,1,1,1),(1,'customers',1,1,1,1),(1,'branches',1,1,1,1),(1,'users',1,1,1,1),(1,'sales',1,1,1,1),
 (1,'purchases',1,1,1,1),(1,'returns',1,1,1,1),(1,'transfers',1,1,1,1),(1,'opname',1,1,1,1),(1,'stock',1,1,1,1),
 (1,'cash',1,1,1,1),(1,'shifts',1,1,1,1),(1,'promotions',1,1,1,1),(1,'reports',1,0,0,0),(1,'barcode',1,1,1,1),
+(1,'backup',1,1,1,1),
 -- Admin Pusat: semua full
 (2, 'dashboard',1,0,0,0),(2,'products',1,1,1,1),(2,'categories',1,1,1,1),(2,'brands',1,1,1,1),(2,'units',1,1,1,1),
 (2,'suppliers',1,1,1,1),(2,'customers',1,1,1,1),(2,'branches',1,1,1,1),(2,'users',1,1,1,1),(2,'sales',1,1,1,1),
 (2,'purchases',1,1,1,1),(2,'returns',1,1,1,1),(2,'transfers',1,1,1,1),(2,'opname',1,1,1,1),(2,'stock',1,1,1,1),
 (2,'cash',1,1,1,1),(2,'shifts',1,1,1,1),(2,'promotions',1,1,1,1),(2,'reports',1,0,0,0),(2,'barcode',1,1,1,1),
+(2,'backup',1,1,1,1),
 -- Manager Cabang
 (3, 'dashboard',1,0,0,0),(3,'products',1,1,1,0),(3,'categories',1,1,1,0),(3,'brands',1,1,1,0),(3,'units',1,1,1,0),
 (3,'suppliers',1,1,1,0),(3,'customers',1,1,1,0),(3,'branches',1,0,0,0),(3,'users',1,0,0,0),(3,'sales',1,1,1,1),

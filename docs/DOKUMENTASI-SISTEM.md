@@ -310,6 +310,7 @@ flowchart LR
 | **Promo** | Kampanye penjualan | BOGO (Beli X Gratis Y) & diskon %, per produk/kategori/semua, per cabang/periode | Promo | `GET/POST/PUT/DELETE /promotions` | `promotions`, `promo_items` |
 | **Laporan** | Analisis bisnis | Laporan penjualan/pembelian/kas/stok/hutang-piutang/bulanan, breakdown per kasir/cabang/barang/kategori/customer, **export CSV/Excel/PDF + invoice PDF** | Laporan | `GET /reports/sales`, `GET /reports/purchases`, `GET /reports/cash`, `GET /reports/stock`, `GET /reports/debts`, `GET /reports/monthly`, `GET /export/report`, `GET /export/invoice/:saleId` | `sales`, `sale_items`, `purchases`, `cash_transactions`, `product_stocks`, `debts`, `receivables` |
 | **PWA & Offline** | Akses tanpa internet | Installable (manifest + service worker), cache API & aset, **mode offline**: transaksi POS masuk antrian lokal & sinkron otomatis saat online, badge status | Semua halaman | (client-side) `virtual:pwa-register`, `src/utils/offline.js` | `localStorage` (`lunapos-queue`) |
+| **Backup Database** | Cadangkan & pulihkan data | Buat backup SQL (mysqldump) sekali klik, unduh, hapus, **restore** (khusus Super Admin), info ukuran/jumlah tabel | Backup Database | `GET /backup/files`, `GET /backup/info`, `POST /backup`, `GET /backup/download/:filename`, `POST /backup/restore`, `DELETE /backup/:filename` | (file `.sql` di `backend/backups/`) |
 | **Barcode** | Cetak label produk | Pilih produk → jumlah label → ukuran label → preview → cetak massal | Cetak Barcode | `GET /barcode/labels`, `GET /barcode/scan/:code` | `products`, `product_units` |
 
 ### Hak Akses per Modul (ringkasan)
@@ -334,6 +335,7 @@ flowchart LR
 | Promo | Full | Full | Lihat | Tidak | Tidak |
 | Laporan | Lihat | Lihat | Lihat | Lihat | Lihat |
 | Barcode | Full | Full | Full | Tidak | Full |
+| Backup DB | Full | Full | Lihat | Tidak | Tidak |
 
 ---
 
@@ -696,6 +698,17 @@ erDiagram
 | GET | `/barcode/labels` | Data label | `product_ids=1,2,3&with_units=1` | produk + labels |
 | GET | `/barcode/scan/:code` | Cari produk via barcode | path `code` | produk + unit + stok; **prioritas: barcode varian → barcode satuan → barcode produk** (jika varian: `is_variant: true, variant_name, price` sudah termasuk selisih) |
 
+### 11.13 Backup Database
+
+| Method | Endpoint | Fungsi | Request | Response |
+|---|---|---|---|---|
+| GET | `/backup/files` | Daftar file backup | - | `{ files: [{ filename, size, size_label, created_at }] }` (urut terbaru) |
+| GET | `/backup/info` | Info database | - | `{ database, size_mb, tables, backup_count, backup_dir }` |
+| POST | `/backup` | Buat backup baru | - | `{ filename, size, size_label, created_at }` (file `lunapos-backup-YYYYMMDDHHMMSS.sql`) |
+| GET | `/backup/download/:filename` | Unduh file backup | path `filename` | file `.sql` (download) |
+| POST | `/backup/restore` | Restore database | `{ filename }` — **khusus Super Admin** | `{ message }` |
+| DELETE | `/backup/:filename` | Hapus file backup | path `filename` | `{ message }` |
+
 ---
 
 ## 12. Business Rules
@@ -726,6 +739,9 @@ erDiagram
 | 22 | **Batch unik per produk+cabang** | `UNIQUE(product_id, branch_id, batch_no)`; input batch yang sama menambah qty (upsert) |
 | 23 | **Scan barcode prioritas varian** | Barcode varian dicek dulu, lalu barcode satuan, lalu barcode produk; harga varian = harga dasar + `price_adjust` |
 | 24 | **Transaksi offline masuk antrian** | Saat offline, `POST /sales` disimpan ke `localStorage` (`lunapos-queue`) dan dikirim berurutan saat online (`flushQueue`) |
+| 25 | **Backup via mysqldump** | `POST /backup` menjalankan `mysqldump --single-transaction --routines --triggers` → file `lunapos-backup-YYYYMMDDHHMMSS.sql` di `backend/backups/`; nama file di-sanitasi `path.basename` saat download/hapus/restore |
+| 26 | **Restore hanya Super Admin** | `POST /backup/restore` menolak (403) jika `req.user.isSuperAdmin` false; restore menjalankan `mysql` CLI dengan isi file sebagai input |
+| 27 | **Permission menu `backup`** | Role 1 & 2 full (view/create/edit/delete), role 3 hanya view; kasir/gudang tidak punya akses (menu tersembunyi + 403) |
 
 ---
 
@@ -939,6 +955,7 @@ erDiagram
 | `src/controllers/promotions.controller.js` | CRUD promo + target items |
 | `src/controllers/reports.controller.js` | Dashboard + 6 laporan (sales, purchases, cash, stock, debts, monthly) |
 | `src/controllers/barcode.controller.js` | Data label & pencarian scan barcode |
+| `src/controllers/backup.controller.js` | Backup DB: list file, buat (mysqldump), unduh, restore (mysql CLI, khusus Super Admin), hapus, info ukuran/tabel |
 | `scripts/init-db.js` | Inisialisasi DB dari schema.sql + seed.sql + user demo |
 | `scripts/smoke-test.js` | Test API end-to-end |
 
@@ -968,7 +985,8 @@ erDiagram
 | `src/components/StatCard.jsx` | Kartu statistik |
 | `src/components/PageHeader.jsx` | Header halaman |
 | `src/components/Skeleton.jsx` | Loading placeholder |
-| `src/pages/*.jsx` | 19 halaman aplikasi |
+| `src/pages/*.jsx` | 20 halaman aplikasi |
+| `src/pages/BackupPage.jsx` | Halaman Backup Database: info DB, daftar file, buat/unduh/restore/hapus backup |
 
 ---
 
@@ -993,6 +1011,8 @@ erDiagram
 | pdfkit | Export PDF (laporan & invoice) |
 | dotenv | Load env |
 | nodemon (dev) | Auto-restart dev |
+
+> **Catatan Backup**: fitur backup memanggil biner `mysqldump` & `mysql` dari instalasi MySQL (default `C:\laragon\bin\mysql\mysql-8.4.3-winx64\bin`, bisa di-override via env `MYSQL_BIN`).
 
 ### 21.2 Frontend (`frontend/package.json`)
 
