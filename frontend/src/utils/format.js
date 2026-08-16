@@ -43,6 +43,21 @@ export const downloadCSV = (filename, headers, rows) => {
   URL.revokeObjectURL(a.href);
 };
 
+export const downloadBlob = (blob, filename) => {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(a.href);
+};
+
+export const downloadURL = (url, filename) => {
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  a.click();
+};
+
 export const typeLabels = {
   sale: 'Penjualan', purchase: 'Pembelian', transfer_in: 'Transfer Masuk', transfer_out: 'Transfer Keluar',
   opname: 'Opname', return_in: 'Retur Masuk', return_out: 'Retur Keluar', manual: 'Manual',

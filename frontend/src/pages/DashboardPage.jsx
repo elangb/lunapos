@@ -14,7 +14,7 @@ import PageHeader from '../components/PageHeader';
 import { PageSkeleton } from '../components/Skeleton';
 import { rupiah, fmtDate } from '../utils/format';
 
-const COLORS = ['#2563eb', '#7c3aed', '#10b981', '#F59E0B', '#EF4444', '#06b6d4'];
+const COLORS = ['#2547eb', '#8b5cf6', '#10b981', '#f59e0b', '#ef4444', '#06b6d4'];
 
 export default function DashboardPage() {
   const [data, setData] = useState(null);
@@ -76,32 +76,47 @@ export default function DashboardPage() {
         <StatCard title="Cabang Aktif" value={data.cabang_aktif} icon={Store} color="primary" sub="beroperasi" />
       </div>
 
+      {data.expiry && (data.expiry.expired.total > 0 || data.expiry.expiring.total > 0) && (
+        <div className={`flex items-center gap-3 p-4 rounded-xl border ${data.expiry.expired.total > 0 ? 'bg-red-50 dark:bg-red-950/30 border-red-200 dark:border-red-800' : 'bg-amber-50 dark:bg-amber-950/30 border-amber-200 dark:border-amber-800'}`}>
+          <AlertTriangle size={22} className={data.expiry.expired.total > 0 ? 'text-danger' : 'text-amber-500'} />
+          <div className="text-sm">
+            <div className="font-bold text-ink-800 dark:text-ink-100">Perhatian: Produk Mendekati Kadaluarsa</div>
+            <div className="text-ink-500 dark:text-ink-300">
+              {data.expiry.expired.total > 0 && <span className="font-semibold text-danger">{data.expiry.expired.total} batch sudah kadaluarsa</span>}
+              {data.expiry.expired.total > 0 && data.expiry.expiring.total > 0 && ' · '}
+              {data.expiry.expiring.total > 0 && <span>{data.expiry.expiring.total} batch akan kadaluarsa dalam 30 hari</span>}
+              {' '}— periksa di menu <Link to="/stock" className="underline font-semibold">Stok → Batch/Expired</Link>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="grid lg:grid-cols-3 gap-4">
         <div className="card p-5 lg:col-span-2">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="font-bold">Penjualan 7 Hari Terakhir</h3>
-            <Link to="/reports" className="text-xs font-semibold text-primary-600 flex items-center gap-1">Laporan <ArrowRight size={13} /></Link>
+            <h3 className="font-bold tracking-tight">Penjualan 7 Hari Terakhir</h3>
+            <Link to="/reports" className="text-xs font-bold text-primary-600 dark:text-primary-400 flex items-center gap-1 hover:gap-1.5 transition-all">Laporan <ArrowRight size={13} /></Link>
           </div>
           <ResponsiveContainer width="100%" height={240}>
             <LineChart data={last7}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#94a3b833" />
-              <XAxis dataKey="date" tick={{ fontSize: 12 }} />
-              <YAxis tick={{ fontSize: 12 }} tickFormatter={(v) => `${(v / 1000).toFixed(0)}rb`} />
-              <Tooltip formatter={(v) => rupiah(v)} />
-              <Line type="monotone" dataKey="omzet" stroke="#2563eb" strokeWidth={2.5} dot={{ r: 3 }} />
+              <CartesianGrid strokeDasharray="3 3" stroke="#94a3b822" vertical={false} />
+              <XAxis dataKey="date" tick={{ fontSize: 12 }} axisLine={false} tickLine={false} />
+              <YAxis tick={{ fontSize: 12 }} tickFormatter={(v) => `${(v / 1000).toFixed(0)}rb`} axisLine={false} tickLine={false} width={44} />
+              <Tooltip formatter={(v) => rupiah(v)} contentStyle={{ borderRadius: 12, border: '1px solid #eef1f6', boxShadow: '0 8px 24px -6px rgb(16 24 40 / 0.12)' }} />
+              <Line type="monotone" dataKey="omzet" stroke="#2547eb" strokeWidth={2.5} dot={{ r: 3, fill: '#2547eb' }} activeDot={{ r: 5 }} />
             </LineChart>
           </ResponsiveContainer>
         </div>
 
         <div className="card p-5">
-          <h3 className="font-bold mb-4">Penjualan 12 Bulan</h3>
+          <h3 className="font-bold mb-4 tracking-tight">Penjualan 12 Bulan</h3>
           <ResponsiveContainer width="100%" height={240}>
             <BarChart data={last12}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#94a3b833" />
-              <XAxis dataKey="month" tick={{ fontSize: 10 }} />
-              <YAxis tick={{ fontSize: 11 }} tickFormatter={(v) => `${(v / 1000).toFixed(0)}rb`} />
-              <Tooltip formatter={(v) => rupiah(v)} />
-              <Bar dataKey="omzet" fill="#2563eb" radius={[6, 6, 0, 0]} />
+              <CartesianGrid strokeDasharray="3 3" stroke="#94a3b822" vertical={false} />
+              <XAxis dataKey="month" tick={{ fontSize: 10 }} axisLine={false} tickLine={false} />
+              <YAxis tick={{ fontSize: 11 }} tickFormatter={(v) => `${(v / 1000).toFixed(0)}rb`} axisLine={false} tickLine={false} width={44} />
+              <Tooltip formatter={(v) => rupiah(v)} contentStyle={{ borderRadius: 12, border: '1px solid #eef1f6', boxShadow: '0 8px 24px -6px rgb(16 24 40 / 0.12)' }} />
+              <Bar dataKey="omzet" fill="#2547eb" radius={[6, 6, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -129,7 +144,7 @@ export default function DashboardPage() {
         </div>
 
         <div className="card p-5">
-          <h3 className="font-bold mb-4">Top 5 Cabang Hari Ini</h3>
+          <h3 className="font-bold mb-4 tracking-tight">Top 5 Cabang Hari Ini</h3>
           {data.top_branches.length === 0 ? (
             <p className="text-sm text-ink-400 py-8 text-center">Belum ada data</p>
           ) : (
@@ -138,7 +153,7 @@ export default function DashboardPage() {
                 <Pie data={data.top_branches} dataKey="total" nameKey="name" innerRadius={55} outerRadius={85} paddingAngle={3}>
                   {data.top_branches.map((_, i) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
                 </Pie>
-                <Tooltip formatter={(v) => rupiah(v)} />
+                <Tooltip formatter={(v) => rupiah(v)} contentStyle={{ borderRadius: 12, border: '1px solid #eef1f6', boxShadow: '0 8px 24px -6px rgb(16 24 40 / 0.12)' }} />
                 <Legend wrapperStyle={{ fontSize: 11 }} />
               </PieChart>
             </ResponsiveContainer>

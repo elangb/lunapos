@@ -59,21 +59,34 @@ INSERT INTO units (id, name, short_name, is_active) VALUES
 (1, 'Pcs', 'pcs', 1), (2, 'Lusin', 'lzn', 1), (3, 'Dus', 'dus', 1);
 
 -- PRODUK (1 dus = 12 lusin = 144 pcs untuk minuman; 1 dus = 48 pcs utk snack)
-INSERT INTO products (id, code, name, category_id, brand_id, base_unit_id, barcode, buy_price, retail_price, wholesale_price, member_price, default_discount, min_stock, is_active) VALUES
-(1, 'PRD-000001', 'Air Mineral Aqua 600ml', 2, 1, 1, '8991001100001', 3000.00, 5000.00, 4500.00, 4200.00, 0.00, 144.000, 1),
-(2, 'PRD-000002', 'Mie Instan Indomie Goreng', 1, 2, 1, '8991001100002', 2500.00, 3500.00, 3200.00, 3000.00, 0.00, 48.000, 1),
-(3, 'PRD-000003', 'Rokok Sampoerna Mild 16', 3, 3, 1, '8991001100003', 28000.00, 31000.00, 30000.00, 29500.00, 0.00, 10.000, 1),
-(4, 'PRD-000004', 'Rokok Djarum Super 12', 3, 4, 1, '8991001100004', 22000.00, 25000.00, 24000.00, 23500.00, 0.00, 10.000, 1),
-(5, 'PRD-000005', 'Teh Botol Sosro 350ml', 2, 6, 1, '8991001100005', 3500.00, 6000.00, 5500.00, 5200.00, 0.00, 48.000, 1),
-(6, 'PRD-000006', 'Kopi Kapal Api 200g', 2, 7, 1, '8991001100006', 12000.00, 17000.00, 16000.00, 15000.00, 0.00, 12.000, 1),
-(7, 'PRD-000007', 'Biskuit Roma Kelapa 300g', 1, 7, 1, '8991001100007', 8000.00, 12000.00, 11000.00, 10500.00, 5.00, 24.000, 1),
-(8, 'PRD-000008', 'Sabun Lifebuoy 110g', 5, 6, 1, '8991001100008', 3500.00, 5500.00, 5000.00, 4800.00, 0.00, 24.000, 1),
-(9, 'PRD-000009', 'Shampoo Clear 170ml', 5, 6, 1, '8991001100009', 13000.00, 19000.00, 18000.00, 17000.00, 0.00, 12.000, 1),
-(10, 'PRD-000010', 'Powerbank Samsung 10000mAh', 4, 5, 1, '8991001100010', 150000.00, 220000.00, 210000.00, 200000.00, 0.00, 5.000, 1),
-(11, 'PRD-000011', 'Kabel Data Type-C 1m', 4, 5, 1, '8991001100011', 25000.00, 45000.00, 42000.00, 40000.00, 0.00, 10.000, 1),
-(12, 'PRD-000012', 'Charger Samsung 25W', 4, 5, 1, '8991001100012', 90000.00, 150000.00, 140000.00, 135000.00, 0.00, 5.000, 1),
-(13, 'PRD-000013', 'Air Mineral Aqua 330ml', 2, 1, 1, '8991001100013', 2000.00, 3500.00, 3200.00, 3000.00, 0.00, 144.000, 1),
-(14, 'PRD-000014', 'Susu Ultra Milk 250ml', 2, 7, 1, '8991001100014', 5000.00, 8000.00, 7500.00, 7000.00, 0.00, 48.000, 1);
+INSERT INTO products (id, code, name, category_id, brand_id, base_unit_id, barcode, buy_price, retail_price, wholesale_price, member_price, default_discount, min_stock, has_expiry, has_variants, is_active) VALUES
+(1, 'PRD-000001', 'Air Mineral Aqua 600ml', 2, 1, 1, '8991001100001', 3000.00, 5000.00, 4500.00, 4200.00, 0.00, 144.000, 0, 0, 1),
+(2, 'PRD-000002', 'Mie Instan Indomie Goreng', 1, 2, 1, '8991001100002', 2500.00, 3500.00, 3200.00, 3000.00, 0.00, 48.000, 1, 0, 1),
+(3, 'PRD-000003', 'Rokok Sampoerna Mild 16', 3, 3, 1, '8991001100003', 28000.00, 31000.00, 30000.00, 29500.00, 0.00, 10.000, 0, 0, 1),
+(4, 'PRD-000004', 'Rokok Djarum Super 12', 3, 4, 1, '8991001100004', 22000.00, 25000.00, 24000.00, 23500.00, 0.00, 10.000, 0, 0, 1),
+(5, 'PRD-000005', 'Teh Botol Sosro 350ml', 2, 6, 1, '8991001100005', 3500.00, 6000.00, 5500.00, 5200.00, 0.00, 48.000, 1, 0, 1),
+(6, 'PRD-000006', 'Kopi Kapal Api 200g', 2, 7, 1, '8991001100006', 12000.00, 17000.00, 16000.00, 15000.00, 0.00, 12.000, 0, 0, 1),
+(7, 'PRD-000007', 'Biskuit Roma Kelapa 300g', 1, 7, 1, '8991001100007', 8000.00, 12000.00, 11000.00, 10500.00, 5.00, 24.000, 1, 0, 1),
+(8, 'PRD-000008', 'Sabun Lifebuoy 110g', 5, 6, 1, '8991001100008', 3500.00, 5500.00, 5000.00, 4800.00, 0.00, 24.000, 0, 0, 1),
+(9, 'PRD-000009', 'Shampoo Clear 170ml', 5, 6, 1, '8991001100009', 13000.00, 19000.00, 18000.00, 17000.00, 0.00, 12.000, 0, 0, 1),
+(10, 'PRD-000010', 'Powerbank Samsung 10000mAh', 4, 5, 1, '8991001100010', 150000.00, 220000.00, 210000.00, 200000.00, 0.00, 5.000, 0, 0, 1),
+(11, 'PRD-000011', 'Kabel Data Type-C 1m', 4, 5, 1, '8991001100011', 25000.00, 45000.00, 42000.00, 40000.00, 0.00, 10.000, 0, 0, 1),
+(12, 'PRD-000012', 'Charger Samsung 25W', 4, 5, 1, '8991001100012', 90000.00, 150000.00, 140000.00, 135000.00, 0.00, 5.000, 0, 0, 1),
+(13, 'PRD-000013', 'Air Mineral Aqua 330ml', 2, 1, 1, '8991001100013', 2000.00, 3500.00, 3200.00, 3000.00, 0.00, 144.000, 0, 1, 1),
+(14, 'PRD-000014', 'Susu Ultra Milk 250ml', 2, 7, 1, '8991001100014', 5000.00, 8000.00, 7500.00, 7000.00, 0.00, 48.000, 1, 0, 1);
+
+-- VARIAN PRODUK contoh (Aqua 330ml: dus isi 24 vs dus isi 48)
+INSERT INTO product_variants (product_id, name, sku, barcode, price_adjust, is_active) VALUES
+(13, 'Dus Isi 24', 'AQUA-330-24', '8991001100131', 0.00, 1),
+(13, 'Dus Isi 48', 'AQUA-330-48', '8991001100132', 15000.00, 1);
+
+-- BATCH contoh (produk dengan expiry date)
+INSERT INTO product_batches (product_id, branch_id, batch_no, expiry_date, qty, purchase_id) VALUES
+(2, 1, 'IDM-2026-01', '2026-12-31', 96.000, NULL),
+(2, 1, 'IDM-2026-02', '2026-08-30', 48.000, NULL),
+(5, 1, 'SOS-2026-A', '2026-11-15', 72.000, NULL),
+(14, 1, 'ULT-2026-01', '2026-09-01', 48.000, NULL),
+(14, 2, 'ULT-2026-01', '2026-09-01', 24.000, NULL);
 
 -- SATUAN BERTINGKAT per produk (conversion ke satuan dasar)
 INSERT INTO product_units (product_id, unit_id, conversion_factor, price, barcode, is_base, is_active) VALUES

@@ -24,6 +24,31 @@ const saleSchema = z.object({
 const num = (v) => parseFloat(v) || 0;
 const round2 = (n) => Math.round(n * 100) / 100;
 
+/* FEFO: kurangi qty dari batch dengan expiry terdekat (expired juga dikurangi dulu agar tidak dijual) */
+async function deductFromBatches(conn, productId, branchId, qty, saleId) {
+  let remaining = num(qty);
+  const [batches] = await conn.query(
+    `SELECT id, qty FROM product_batches
+     WHERE product_id = ? AND branch_id = ? AND qty > 0
+     ORDER BY expiry_date IS NULL, expiry_date ASC, id ASC`,
+    [productId, branchId]
+  );
+  for (const b of batches) {
+    if (remaining <= 0) break;
+    const take = Math.min(num(b.qty), remaining);
+    await conn.query('UPDATE product_batches SET qty = qty - ? WHERE id = ?', [take, b.id]);
+    remaining = round2(remaining - take);
+  }
+  // catat audit ringan (tidak menggagalkan transaksi)
+  try {
+    await conn.query(
+      `INSERT INTO audit_logs (user_id, action, table_name, record_id, old_data, new_data)
+       VALUES (NULL, 'fefo_sale', 'product_batches', ?, ?, ?)`,
+      [saleId, null, JSON.stringify({ product_id: productId, branch_id: branchId, qty: num(qty) })]
+    );
+  } catch { /* abaikan */ }
+}
+
 /* POST /api/sales */
 exports.create = asyncHandler(async (req, res) => {
   const body = saleSchema.parse(req.body);
@@ -52,7 +77,7 @@ exports.create = asyncHandler(async (req, res) => {
     if (!unit) return fail(res, 400, `Satuan produk ${prod.name} tidak valid`);
     const price = canEditPrice && it.price !== undefined ? it.price : num(unit.price);
     cart.push({
-      productId: prod.id, productName: prod.name, category_id: prod.category_id,
+      productId: prod.id, productName: it.name || prod.name, category_id: prod.category_id,
       unit_id: unit.id, unit_name: unit.unit_short || unit.unit_name,
       unit_factor: num(unit.conversion_factor), qty: it.qty, unit_price: price,
       discount: canEditPrice && it.discount !== undefined ? it.discount : 0,
@@ -121,6 +146,8 @@ exports.create = asyncHandler(async (req, res) => {
           productId: it.productId, branchId, qty: -baseQty, type: 'sale',
           refType: 'sale', refId: saleId, note: invoiceNo, userId: req.user.id,
         });
+        // FEFO: kurangi qty dari batch dengan expiry terdekat
+        await deductFromBatches(conn, it.productId, branchId, baseQty, saleId);
       }
     }
 

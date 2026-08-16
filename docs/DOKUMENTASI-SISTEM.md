@@ -295,20 +295,21 @@ flowchart LR
 |---|---|---|---|---|---|
 | **Auth** | Autentikasi pengguna | Login, refresh token, profil, ganti password, reset password | Login, Profile | `POST /auth/login`, `POST /auth/refresh`, `GET /auth/me`, `POST /auth/change-password`, `POST /auth/reset-password` | `users`, `roles`, `permissions` |
 | **Dashboard** | Ringkasan performa bisnis | StatCard omzet/laba/transaksi, grafik 7 hari & 12 bulan, top 10 produk, top 5 cabang | Dashboard | `GET /reports/dashboard` | `sales`, `sale_items`, `products`, `receivables`, `debts`, `product_stocks` |
-| **POS / Penjualan** | Transaksi kasir | Scan barcode (keyboard & kamera), cari realtime, qty cepat, edit harga (per hak akses), diskon item/transaksi, metode bayar cash/transfer/QRIS/hutang/mixed, hold & recall, void, struk | POS, Riwayat Penjualan | `POST /sales`, `GET /sales`, `GET /sales/:id`, `POST /sales/:id/void`, `POST /sales/hold`, `GET /sales/holds`, `POST /sales/receivables/:id/pay` | `sales`, `sale_items`, `sale_holds`, `receivables`, `receivable_payments` |
-| **Produk** | Master barang | Kode otomatis, barcode EAN-13/CODE128, foto, satuan bertingkat (pcs/lusin/dus) dengan konversi, 4 harga (beli/retail/grosir/member), stok minimum, adjust stok | Barang | `GET/POST/PUT/DELETE /products`, `GET /products/options`, `POST /products/generate-barcode`, `POST /products/:id/adjust-stock` | `products`, `product_units`, `product_stocks`, `categories`, `brands`, `units` |
+| **POS / Penjualan** | Transaksi kasir | Scan barcode (keyboard & kamera), cari realtime, qty cepat, edit harga (per hak akses), diskon item/transaksi, metode bayar cash/transfer/QRIS/hutang/mixed, hold & recall, void, struk, **pilih variasi produk** (ukuran/warna) | POS, Riwayat Penjualan | `POST /sales`, `GET /sales`, `GET /sales/:id`, `POST /sales/:id/void`, `POST /sales/hold`, `GET /sales/holds`, `POST /sales/receivables/:id/pay` | `sales`, `sale_items`, `sale_holds`, `receivables`, `receivable_payments` |
+| **Produk** | Master barang | Kode otomatis, barcode EAN-13/CODE128, foto, satuan bertingkat (pcs/lusin/dus) dengan konversi, 4 harga (beli/retail/grosir/member), stok minimum, adjust stok, **variasi produk** (nama/SKU/barcode/selisih harga/aktif), **flag batch/expired** | Barang | `GET/POST/PUT/DELETE /products`, `GET /products/options`, `POST /products/generate-barcode`, `POST /products/:id/adjust-stock` | `products`, `product_units`, `product_stocks`, `product_variants`, `categories`, `brands`, `units` |
 | **Master Data** | Data referensi | CRUD kategori, merk, satuan | Kategori / Merk / Satuan | `/categories`, `/brands`, `/units` (+ `/options`) | `categories`, `brands`, `units` |
 | **Supplier** | Master pemasok + hutang | CRUD supplier, lihat hutang & riwayat pembelian per supplier | Supplier | `GET/POST/PUT/DELETE /suppliers`, `GET /suppliers/:id/debts`, `GET /suppliers/:id/purchases` | `suppliers`, `debts`, `purchases` |
 | **Customer** | Master pelanggan + piutang | CRUD customer (umum/grosir/member), lihat piutang & riwayat penjualan | Customer | `GET/POST/PUT/DELETE /customers`, `GET /customers/:id/receivables`, `GET /customers/:id/sales` | `customers`, `receivables`, `sales` |
 | **Cabang** | Kelola cabang | CRUD cabang, status aktif | Cabang | `GET/POST/PUT/DELETE /branches` | `branches` |
 | **User & Hak Akses** | Kelola pengguna | CRUD user, kelola role & permission per menu (view/create/edit/delete) | User & Hak Akses | `GET/POST/PUT/DELETE /users`, `GET /users/roles`, `GET/PUT /users/:id/permissions` | `users`, `roles`, `permissions` |
-| **Pembelian & Retur** | Pengadaan barang | Pembelian cash/hutang, diskon, pajak, ongkir, retur sebagian/penuh | Pembelian & Retur | `POST /purchases`, `GET /purchases`, `GET /purchases/:id`, `POST /purchases/returns`, `GET /purchases/returns` | `purchases`, `purchase_items`, `purchase_returns`, `purchase_return_items`, `debts` |
-| **Stok** | Pengelolaan stok | Kartu stok saldo berjalan, mutasi stok, stok menipis | Stok & Kartu Stok | `GET /stock/movements`, `GET /stock/card`, `GET /stock/low` | `stock_movements`, `product_stocks`, `products` |
+| **Pembelian & Retur** | Pengadaan barang | Pembelian cash/hutang, diskon, pajak, ongkir, retur sebagian/penuh, **input batch & tanggal kadaluarsa per item** | Pembelian & Retur | `POST /purchases`, `GET /purchases`, `GET /purchases/:id`, `POST /purchases/returns`, `GET /purchases/returns` | `purchases`, `purchase_items`, `purchase_returns`, `purchase_return_items`, `debts`, `product_batches` |
+| **Stok** | Pengelolaan stok | Kartu stok saldo berjalan, mutasi stok, stok menipis, **tab Batch/Expired** (filter aktif/akan kadaluarsa/sudah kadaluarsa, input batch manual, FEFO saat penjualan) | Stok & Kartu Stok | `GET /stock/movements`, `GET /stock/card`, `GET /stock/low`, `GET /batches`, `GET /batches/summary`, `POST /batches`, `PUT /batches/:id` | `stock_movements`, `product_stocks`, `products`, `product_batches` |
 | **Mutasi Antar Cabang** | Distribusi stok | Transfer antar cabang dengan approval | Mutasi Antar Cabang | `POST /stock/transfers`, `GET /stock/transfers`, `POST /stock/transfers/:id/approve`, `POST /stock/transfers/:id/reject` | `stock_transfers`, `stock_transfer_items` |
 | **Stok Opname** | Audit fisik stok | Sesi opname, scan barcode, input fisik, selisih, approval, jurnal | Stok Opname | `POST/GET /stock/opnames`, `GET /stock/opnames/:id`, `POST /stock/opnames/:id/items`, `PUT /stock/opnames/:id/items/:itemId`, `POST /stock/opnames/:id/submit|approve|reject` | `stock_opnames`, `stock_opname_items` |
 | **Kas & Shift** | Pengelolaan kas harian | Buka/tutup shift, saldo awal, kas masuk/keluar, setor pusat, tarik tunai, selisih shift | Kas & Shift | `POST /cash/shifts/open`, `POST /cash/shifts/:id/close`, `GET /cash/shifts`, `POST/GET /cash/transactions` | `shifts`, `cash_transactions` |
 | **Promo** | Kampanye penjualan | BOGO (Beli X Gratis Y) & diskon %, per produk/kategori/semua, per cabang/periode | Promo | `GET/POST/PUT/DELETE /promotions` | `promotions`, `promo_items` |
-| **Laporan** | Analisis bisnis | Laporan penjualan/pembelian/kas/stok/hutang-piutang/bulanan, breakdown per kasir/cabang/barang/kategori/customer, export CSV | Laporan | `GET /reports/sales`, `GET /reports/purchases`, `GET /reports/cash`, `GET /reports/stock`, `GET /reports/debts`, `GET /reports/monthly` | `sales`, `sale_items`, `purchases`, `cash_transactions`, `product_stocks`, `debts`, `receivables` |
+| **Laporan** | Analisis bisnis | Laporan penjualan/pembelian/kas/stok/hutang-piutang/bulanan, breakdown per kasir/cabang/barang/kategori/customer, **export CSV/Excel/PDF + invoice PDF** | Laporan | `GET /reports/sales`, `GET /reports/purchases`, `GET /reports/cash`, `GET /reports/stock`, `GET /reports/debts`, `GET /reports/monthly`, `GET /export/report`, `GET /export/invoice/:saleId` | `sales`, `sale_items`, `purchases`, `cash_transactions`, `product_stocks`, `debts`, `receivables` |
+| **PWA & Offline** | Akses tanpa internet | Installable (manifest + service worker), cache API & aset, **mode offline**: transaksi POS masuk antrian lokal & sinkron otomatis saat online, badge status | Semua halaman | (client-side) `virtual:pwa-register`, `src/utils/offline.js` | `localStorage` (`lunapos-queue`) |
 | **Barcode** | Cetak label produk | Pilih produk → jumlah label → ukuran label → preview → cetak massal | Cetak Barcode | `GET /barcode/labels`, `GET /barcode/scan/:code` | `products`, `product_units` |
 
 ### Hak Akses per Modul (ringkasan)
@@ -433,11 +434,11 @@ flowchart LR
 |---|---|---|
 | Akses | `roles`, `permissions` | Role + permission per menu (view/create/edit/delete) |
 | Organisasi | `branches`, `users` | Cabang & pengguna |
-| Master | `categories`, `brands`, `units`, `products`, `product_units`, `product_stocks` | Data produk & satuan bertingkat |
+| Master | `categories`, `brands`, `units`, `products`, `product_units`, `product_stocks`, `product_variants` | Data produk, satuan bertingkat & variasi (ukuran/warna) |
 | Pihak | `suppliers`, `customers` | Pemasok & pelanggan |
 | Penjualan | `sales`, `sale_items`, `sale_holds` | Transaksi POS + hold |
 | Pembelian | `purchases`, `purchase_items`, `purchase_returns`, `purchase_return_items` | Pembelian + retur |
-| Stok | `stock_movements`, `stock_transfers`, `stock_transfer_items`, `stock_opnames`, `stock_opname_items` | Mutasi, transfer, opname |
+| Stok | `stock_movements`, `stock_transfers`, `stock_transfer_items`, `stock_opnames`, `stock_opname_items`, `product_batches` | Mutasi, transfer, opname, batch & expired |
 | Kas | `shifts`, `cash_transactions` | Shift kasir & transaksi kas |
 | Keuangan | `debts`, `debt_payments`, `receivables`, `receivable_payments` | Hutang & piutang |
 | Promo | `promotions`, `promo_items` | Promo BOGO/diskonto |
@@ -454,7 +455,9 @@ flowchart LR
 | categories / brands / units | id | - |
 | products | id | category_id → categories(id), brand_id → brands(id), base_unit_id → units(id) |
 | product_units | id | product_id → products(id), unit_id → units(id) |
+| product_variants | id | product_id → products(id) (UNIQUE product_id+name) |
 | product_stocks | id | product_id → products(id), branch_id → branches(id) (UNIQUE product_id+branch_id) |
+| product_batches | id | product_id → products(id), branch_id → branches(id) (UNIQUE product_id+branch_id+batch_no) |
 | suppliers / customers | id | - |
 | sales | id | branch_id → branches(id), user_id → users(id), customer_id → customers(id), shift_id → shifts(id) |
 | sale_items | id | sale_id → sales(id), product_id → products(id) |
@@ -480,8 +483,8 @@ flowchart LR
 
 ### 10.3 Index & Constraint Penting
 
-- `UNIQUE KEY` pada: `roles.name`, `permissions(role_id,menu)`, `users.username`, `categories.name`, `brands.name`, `units.name`, `products.code`, `product_stocks(product_id,branch_id)`, `suppliers.code`, `customers.code`, `sales.invoice_no`, `sale_holds.hold_no`, `purchases.purchase_no`, `purchase_returns.return_no`, `stock_transfers.transfer_no`, `stock_opnames.opname_no`.
-- Index komposit untuk query umum: `idx_sales_branch_date`, `idx_sales_user`, `idx_stock_branch`, `idx_sm_product`, `idx_sm_branch`, `idx_ct_branch`, `idx_debt_supplier`, `idx_rec_customer`.
+- `UNIQUE KEY` pada: `roles.name`, `permissions(role_id,menu)`, `users.username`, `categories.name`, `brands.name`, `units.name`, `products.code`, `product_stocks(product_id,branch_id)`, `product_variants(product_id,name)`, `product_batches(product_id,branch_id,batch_no)`, `suppliers.code`, `customers.code`, `sales.invoice_no`, `sale_holds.hold_no`, `purchases.purchase_no`, `purchase_returns.return_no`, `stock_transfers.transfer_no`, `stock_opnames.opname_no`.
+- Index komposit untuk query umum: `idx_sales_branch_date`, `idx_sales_user`, `idx_stock_branch`, `idx_sm_product`, `idx_sm_branch`, `idx_ct_branch`, `idx_debt_supplier`, `idx_rec_customer`, `idx_batch_expiry`, `idx_batch_branch`.
 - Constraint nilai: `ENUM` pada `customers.type`, `sales.payment_method`, `sales.status`, `purchases.payment_method`, `purchases.status`, `purchase_returns.return_type`, `stock_movements.type`, `stock_transfers.status`, `stock_opnames.status`, `shifts.status`, `cash_transactions.type`, `debts.status`, `receivables.status`, `promotions.type`, `promotions.target`.
 
 ### 10.4 ERD
@@ -581,9 +584,9 @@ erDiagram
 | Method | Endpoint | Fungsi | Request | Response |
 |---|---|---|---|---|
 | GET | `/products` | Daftar produk | `search, category_id, brand_id, branch_id, low_stock, status, page, limit` | list + meta |
-| GET | `/products/options` | Opsi untuk POS | `branch_id` | produk + units + stok |
-| GET | `/products/:id` | Detail produk | - | produk + units + stok per cabang |
-| POST | `/products` | Buat produk (multipart) | form-data: `name, base_unit_id, harga*, units (JSON string), photo` | `{ id, code }` |
+| GET | `/products/options` | Opsi untuk POS | `branch_id` | produk + units + **variants** + stok |
+| GET | `/products/:id` | Detail produk | - | produk + units + stok per cabang + **variants** |
+| POST | `/products` | Buat produk (multipart) | form-data: `name, base_unit_id, harga*, units (JSON string), has_expiry, has_variants, variants (JSON string), photo` | `{ id, code }` |
 | PUT | `/products/:id` | Update produk | form-data/json | sukses |
 | DELETE | `/products/:id` | Nonaktifkan produk (soft) | - | sukses |
 | POST | `/products/generate-barcode` | Generate barcode | `{ product_id, unit_id?, format: 'EAN13'\|'CODE128' }` | `{ barcode }` |
@@ -606,7 +609,7 @@ erDiagram
 
 | Method | Endpoint | Fungsi | Request | Response |
 |---|---|---|---|---|
-| POST | `/sales` | Proses transaksi | `{ items: [{product_id, unit_id?, qty, price?, discount?}], customer_id?, payment_method, total_paid?, due_date?, tax_rate?, trans_discount?, note?, branch_id? }` | `{ id, invoice_no, total, debt_amount, applied }` |
+| POST | `/sales` | Proses transaksi | `{ items: [{product_id, unit_id?, qty, price?, discount?, batch_no?, expiry_date?, variant_id?, name?}], customer_id?, payment_method, total_paid?, due_date?, tax_rate?, trans_discount?, note?, branch_id? }` | `{ id, invoice_no, total, debt_amount, applied }` |
 | GET | `/sales` | Daftar penjualan | `from, to, branch_id, user_id, customer_id, payment_method, search, status, page, limit` | list + meta + summary |
 | GET | `/sales/:id` | Detail transaksi | - | transaksi + items + receivables |
 | POST | `/sales/:id/void` | Batalkan transaksi | - | sukses (stok dikembalikan) |
@@ -620,7 +623,7 @@ erDiagram
 
 | Method | Endpoint | Fungsi | Request | Response |
 |---|---|---|---|---|
-| POST | `/purchases` | Buat pembelian | `{ supplier_id, items, discount_total?, tax_rate?, shipping_cost?, payment_method, total_paid?, due_date?, note?, branch_id? }` | `{ id, purchase_no, total, debt_amount }` |
+| POST | `/purchases` | Buat pembelian | `{ supplier_id, items: [{product_id, qty, batch_no?, expiry_date?}], discount_total?, tax_rate?, shipping_cost?, payment_method, total_paid?, due_date?, note?, branch_id? }` | `{ id, purchase_no, total, debt_amount }` |
 | GET | `/purchases` | Daftar pembelian | `from, to, branch_id, supplier_id, payment_method, search, page, limit` | list + meta |
 | GET | `/purchases/:id` | Detail pembelian | - | + items, debts, returns |
 | POST | `/purchases/returns` | Retur pembelian | `{ purchase_id, items: [{product_id, qty}], return_type?, reason? }` | sukses |
@@ -633,6 +636,10 @@ erDiagram
 | GET | `/stock/movements` | Mutasi stok | `product_id, branch_id, type, from, to, page, limit` | list + meta |
 | GET | `/stock/card` | Kartu stok | `product_id (wajib), branch_id, from, to` | `{ product, branch, opening, items (dengan balance) }` |
 | GET | `/stock/low` | Stok menipis | `branch_id?` | list |
+| GET | `/batches` | Daftar batch | `branch_id, product_id, status (active/expired/expiring), days (default 30), page, limit` | list + meta (dengan `days_left`) |
+| GET | `/batches/summary` | Ringkasan expired/expiring | `branch_id?` | `{ expired: {qty,total}, expiring: {qty,total} }` |
+| POST | `/batches` | Input batch / stok masuk | `{ product_id, batch_no, expiry_date?, qty, note?, branch_id? }` | `{ id }` (stok bertambah) |
+| PUT | `/batches/:id` | Ubah batch | `{ expiry_date?, batch_no? }` | sukses |
 | POST | `/stock/transfers` | Buat transfer | `{ to_branch_id, items: [{product_id, qty}], note? }` | `{ id, transfer_no }` |
 | GET | `/stock/transfers` | Daftar transfer | `status, branch_id, page, limit` | list + meta |
 | GET | `/stock/transfers/:id` | Detail transfer | - | + items |
@@ -679,13 +686,15 @@ erDiagram
 | GET | `/reports/stock` | Laporan stok | `view: current` | rows |
 | GET | `/reports/debts` | Hutang & piutang | `period, view (hutang/piutang)` | rows + umur |
 | GET | `/reports/monthly` | Bulanan/tahunan | `year` | rows per bulan |
+| GET | `/export/report` | Export laporan | `type (sales/purchases/cash/stock/debts), format (xlsx/pdf), period/from/to, breakdown?` | file biner (Excel/PDF) |
+| GET | `/export/invoice/:saleId` | Invoice PDF | path `saleId` | file PDF |
 
 ### 11.12 Barcode
 
 | Method | Endpoint | Fungsi | Request | Response |
 |---|---|---|---|---|
 | GET | `/barcode/labels` | Data label | `product_ids=1,2,3&with_units=1` | produk + labels |
-| GET | `/barcode/scan/:code` | Cari produk via barcode | path `code` | produk + unit + stok |
+| GET | `/barcode/scan/:code` | Cari produk via barcode | path `code` | produk + unit + stok; **prioritas: barcode varian → barcode satuan → barcode produk** (jika varian: `is_variant: true, variant_name, price` sudah termasuk selisih) |
 
 ---
 
@@ -713,6 +722,10 @@ erDiagram
 | 18 | **Hutang/piutang berstatus** | `unpaid → partial → paid` berdasarkan pembayaran |
 | 19 | **Stok menipis** | `product_stocks.qty <= min_stock` |
 | 20 | **Pembayaran hutang via penjualan (debt)** | Total tagihan = subtotal - diskon + pajak; `debt_amount = max(0, total - total_paid)` |
+| 21 | **FEFO saat penjualan** | Batch dikurangi urutan: `expiry_date NULL` terakhir → `expiry_date ASC` → `id ASC`; dicatat di `audit_logs` (type `fefo_sale`) |
+| 22 | **Batch unik per produk+cabang** | `UNIQUE(product_id, branch_id, batch_no)`; input batch yang sama menambah qty (upsert) |
+| 23 | **Scan barcode prioritas varian** | Barcode varian dicek dulu, lalu barcode satuan, lalu barcode produk; harga varian = harga dasar + `price_adjust` |
+| 24 | **Transaksi offline masuk antrian** | Saat offline, `POST /sales` disimpan ke `localStorage` (`lunapos-queue`) dan dikirim berurutan saat online (`flushQueue`) |
 
 ---
 
@@ -737,7 +750,8 @@ erDiagram
 |---|---|
 | `saleSchema` | items min 1; `qty > 0`; `price >= 0`; `payment_method` enum; `tax_rate 0..100`; `total_paid >= 0` |
 | `purchaseSchema` | supplier_id wajib; items min 1; `discount_total >= 0`; `tax_rate 0..100`; `shipping_cost >= 0` |
-| `productSchema` | `name` wajib; `base_unit_id` wajib; harga `>= 0`; `conversion_factor > 0`; unit `is_base` valid |
+| `productSchema` | `name` wajib; `base_unit_id` wajib; harga `>= 0`; `conversion_factor > 0`; unit `is_base` valid; `variants[].name` wajib (jika ada) |
+| `batchSchema` | `product_id` wajib; `batch_no` wajib; `qty > 0` (coerce number agar menerima string form) |
 | `promoSchema` | `name` wajib; `type` enum bogo/discount; `buy_qty/free_qty` int min 1; `discount_percent 0..100`; `start_date/end_date` wajib |
 | Master controller | `name` wajib untuk create |
 
@@ -912,11 +926,14 @@ erDiagram
 | `src/controllers/users.controller.js` | CRUD user + manajemen permission per role |
 | `src/controllers/branches.controller.js` | CRUD cabang |
 | `src/controllers/master.controller.js` | Factory CRUD generik untuk kategori/merk/satuan |
-| `src/controllers/products.controller.js` | CRUD produk + satuan bertingkat + barcode + adjust stock |
+| `src/controllers/products.controller.js` | CRUD produk + satuan bertingkat + **variasi** + barcode + adjust stock |
+| `src/controllers/batches.controller.js` | Batch & expired: list (filter status/days), summary, input batch (upsert + stok), update |
+| `src/controllers/exports.controller.js` | Export laporan Excel/PDF (`/export/report`) + invoice PDF (`/export/invoice/:saleId`) |
+| `src/services/exporter.js` | Builder XLSX (exceljs) & PDF (pdfkit) dengan header indigo |
 | `src/controllers/suppliers.controller.js` | CRUD supplier + hutang & riwayat |
 | `src/controllers/customers.controller.js` | CRUD customer + piutang & riwayat |
-| `src/controllers/sales.controller.js` | POS: create (promo + stok + piutang + kas), list, get, void, hold, payReceivable |
-| `src/controllers/purchases.controller.js` | Pembelian (stok + hutang + kas) + retur |
+| `src/controllers/sales.controller.js` | POS: create (promo + stok + **FEFO batch** + piutang + kas), list, get, void, hold, payReceivable |
+| `src/controllers/purchases.controller.js` | Pembelian (stok + **batch** + hutang + kas) + retur |
 | `src/controllers/stock.controller.js` | Mutasi, kartu stok, low stock, transfer (approval), opname (workflow) |
 | `src/controllers/cash.controller.js` | Buka/tutup shift (hitung selisih), transaksi kas |
 | `src/controllers/promotions.controller.js` | CRUD promo + target items |
@@ -929,16 +946,18 @@ erDiagram
 
 | File | Fungsi |
 |---|---|
-| `src/main.jsx` | Entry React + providers |
+| `src/main.jsx` | Entry React + providers + **PWA registerSW + sinkronisasi antrian offline** |
 | `src/App.jsx` | Routing SPA + guard login + toggle dark class |
 | `src/api/client.js` | Axios instance (baseURL `/api`, timeout 30s), interceptor token & 401 logout |
 | `src/api/index.js` | Modul API per resource (authApi, productsApi, salesApi, stockApi, dsb.) |
 | `src/stores/auth.js` | Zustand persist: token, user, login/logout, helper `can()` |
 | `src/stores/ui.js` | Dark mode & sidebar collapsed |
 | `src/stores/pos.js` | State keranjang POS (item, customer, diskon, total) |
-| `src/utils/format.js` | Format rupiah/tanggal/qty, presets periode, export CSV |
+| `src/utils/format.js` | Format rupiah/tanggal/qty, presets periode, export CSV, downloadBlob/downloadURL |
+| `src/utils/offline.js` | Deteksi online/offline, antrian transaksi (`lunapos-queue`), `flushQueue` sinkronisasi |
 | `src/utils/toast.js` | Toast SweetAlert2 |
 | `src/utils/confirm.js` | Dialog konfirmasi & prompt |
+| `src/components/OfflineBadge.jsx` | Badge status offline & jumlah transaksi menunggu sinkron |
 | `src/components/Layout.jsx` | Layout utama (sidebar + header + main) |
 | `src/components/Sidebar.jsx` | Navigasi menu berbasis permission |
 | `src/components/Header.jsx` | Header + dark mode + menu user |
@@ -970,6 +989,8 @@ erDiagram
 | compression | Gzip response |
 | morgan | Log request |
 | multer | Upload file |
+| exceljs | Export Excel (.xlsx) |
+| pdfkit | Export PDF (laporan & invoice) |
 | dotenv | Load env |
 | nodemon (dev) | Auto-restart dev |
 
@@ -984,6 +1005,8 @@ erDiagram
 | react-hook-form | Form |
 | @hookform/resolvers | Integrasi Zod resolver |
 | zod | Validasi |
+| vite-plugin-pwa | PWA: manifest + service worker (Workbox) |
+| lucide-react | Ikon |
 | @tanstack/react-table | DataTable |
 | recharts | Chart |
 | lucide-react | Ikon |

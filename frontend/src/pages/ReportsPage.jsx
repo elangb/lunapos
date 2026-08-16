@@ -2,12 +2,13 @@ import { useEffect, useMemo, useState } from 'react';
 import {
   BarChart, Bar, LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Legend, PieChart, Pie, Cell,
 } from 'recharts';
-import { Download } from 'lucide-react';
+import { Download, FileSpreadsheet, FileText } from 'lucide-react';
 import PageHeader from '../components/PageHeader';
 import Field from '../components/Field';
-import { reportsApi } from '../api';
+import { reportsApi, exportApi } from '../api';
 import { errMsg } from '../api/client';
-import { rupiah, fmtQty, fmtDate, today, periodPresets, downloadCSV } from '../utils/format';
+import toast from '../utils/toast';
+import { rupiah, fmtQty, fmtDate, today, periodPresets, downloadCSV, downloadBlob } from '../utils/format';
 
 const COLORS = ['#2563eb', '#7c3aed', '#10b981', '#F59E0B', '#EF4444', '#06b6d4'];
 
@@ -88,6 +89,28 @@ export default function ReportsPage() {
       downloadCSV('laporan-hutang-piutang.csv', ['Pihak', 'Referensi', 'Sisa', 'Jatuh Tempo', 'Umur (hari)'], rows.map((r) => [r.supplier_name || r.customer_name, r.purchase_no || r.invoice_no, r.amount - r.paid_amount, r.due_date, r.umur_hari]));
     } else if (tab === 'monthly') {
       downloadCSV(`laporan-tahunan-${year}.csv`, ['Bulan', 'Transaksi', 'Omzet', 'Laba', 'Rata-rata'], rows.map((r) => [r.month, r.transaksi, r.omzet, r.laba, r.rata_rata]));
+    } else if (tab === 'stock') {
+      downloadCSV('laporan-stok.csv', ['Kode', 'Produk', 'Kategori', 'Stok', 'Harga Beli', 'Harga Jual', 'Cabang'], rows.map((r) => [r.code, r.name, r.category_name, r.stock_qty, r.buy_price, r.retail_price, r.branch_name]));
+    }
+  };
+
+  const exportFile = async (format) => {
+    try {
+      if (tab === 'stock') {
+        const blob = await exportApi.report({ type: 'stock', format, view: data?.view || 'current' });
+        downloadBlob(blob, `laporan-stok-${today()}.${format}`);
+      } else if (tab === 'debts') {
+        const blob = await exportApi.report({ type: 'debts', format, view: 'hutang' });
+        downloadBlob(blob, `laporan-hutang-${today()}.${format}`);
+      } else if (tab === 'monthly') {
+        toast.info('Export bulanan gunakan tab Laporan Penjualan');
+      } else {
+        const blob = await exportApi.report({ type: tab, format, ...params, breakdown });
+        downloadBlob(blob, `laporan-${tab}-${from}-${to}.${format}`);
+      }
+    } catch (e) {
+      console.error(e);
+      toast.error(errMsg(e));
     }
   };
 
@@ -106,7 +129,13 @@ export default function ReportsPage() {
   return (
     <div>
       <PageHeader title="Laporan" subtitle="Filter: hari ini, kemarin, minggu, bulan, tahun, custom — per cabang otomatis sesuai peran"
-        actions={<button className="btn-secondary" onClick={exportCSV} disabled={!data}><Download size={16} /> Export CSV</button>} />
+        actions={
+          <div className="flex gap-2">
+            <button className="btn-secondary" onClick={exportCSV} disabled={!data}><Download size={16} /> Export CSV</button>
+            <button className="btn-secondary" onClick={() => exportFile('xlsx')} disabled={!data}><FileSpreadsheet size={16} /> Excel</button>
+            <button className="btn-secondary" onClick={() => exportFile('pdf')} disabled={!data}><FileText size={16} /> PDF</button>
+          </div>
+        } />
 
       <div className="flex flex-wrap gap-2 mb-4">
         <div className="flex gap-1 p-1 bg-ink-100 dark:bg-ink-800 rounded-xl w-fit flex-wrap">

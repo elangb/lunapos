@@ -64,6 +64,17 @@ exports.dashboard = asyncHandler(async (req, res) => {
   );
   const [[branches]] = await pool.query('SELECT COUNT(*) AS total FROM branches WHERE is_active = 1');
 
+  // Batch / expiry (produk kadaluarsa & segera kadaluarsa)
+  const bidb = req.user.branch_id;
+  const bidbParams = bidb ? [bidb] : [];
+  const bidbSql = bidb ? 'AND branch_id = ?' : '';
+  const [[expiredBatches]] = await pool.query(
+    `SELECT IFNULL(SUM(qty),0) AS qty, COUNT(*) AS total FROM product_batches
+     WHERE qty > 0 AND expiry_date IS NOT NULL AND expiry_date < CURDATE() ${bidbSql}`, bidbParams);
+  const [[expiringBatches]] = await pool.query(
+    `SELECT IFNULL(SUM(qty),0) AS qty, COUNT(*) AS total FROM product_batches
+     WHERE qty > 0 AND expiry_date IS NOT NULL AND expiry_date BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 30 DAY) ${bidbSql}`, bidbParams);
+
   // 7 hari terakhir
   const [last7] = await pool.query(
     `SELECT DATE(s.created_at) AS date, IFNULL(SUM(s.total),0) AS total, COUNT(*) AS transaksi
@@ -98,6 +109,10 @@ exports.dashboard = asyncHandler(async (req, res) => {
   return ok(res, {
     today: { omzet: num(today.omzet), transaksi: today.transaksi, laba: num(profit.laba), piutang_baru: num(today.piutang_baru) },
     hutang: num(hutang.total), piutang: num(piutang.total), low_stock: lowStock.total, cabang_aktif: branches.total,
+    expiry: {
+      expired: { qty: num(expiredBatches.qty), total: expiredBatches.total },
+      expiring: { qty: num(expiringBatches.qty), total: expiringBatches.total },
+    },
     last7, last12, top_products: topProducts, top_branches: topBranches,
   });
 });

@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useState } from 'react';
 import toast from '../utils/toast';
-import { BookOpen, Download } from 'lucide-react';
+import { BookOpen, Download, AlertTriangle, Plus } from 'lucide-react';
 import DataTable from '../components/DataTable';
 import Field, { SearchInput } from '../components/Field';
+import Modal from '../components/Modal';
 import PageHeader from '../components/PageHeader';
-import { stockApi, productsApi, reportsApi } from '../api';
+import { stockApi, productsApi, reportsApi, batchesApi, branchesApi } from '../api';
 import { errMsg } from '../api/client';
 import { useAuthStore } from '../stores/auth';
 import { rupiah, fmtQty, fmtDate, today, downloadCSV, typeLabels } from '../utils/format';
@@ -22,9 +23,16 @@ export default function StockPage() {
   const [productId, setProductId] = useState('');
   const [products, setProducts] = useState([]);
   const [card, setCard] = useState(null);
+  const [batchStatus, setBatchStatus] = useState('active');
+  const [batchDays, setBatchDays] = useState(30);
+  const [showBatchModal, setShowBatchModal] = useState(false);
+  const [batchForm, setBatchForm] = useState({ product_id: '', branch_id: '', batch_no: '', expiry_date: '', qty: '' });
+  const [branches, setBranches] = useState([]);
+  const { user } = useAuthStore();
 
   useEffect(() => {
     productsApi.list({ limit: 100 }).then((r) => setProducts(r.data));
+    branchesApi.options().then((r) => setBranches(r.data));
   }, []);
 
   const load = async (p = 1) => {
@@ -39,6 +47,9 @@ export default function StockPage() {
       } else if (tab === 'low') {
         const res = await stockApi.low();
         setData(res.data); setMeta({ total: res.data.length, page: 1, limit: res.data.length });
+      } else if (tab === 'batches') {
+        const res = await batchesApi.list({ page: p, status: batchStatus, days: batchDays, limit: 15 });
+        setData(res.data); setMeta(res.meta);
       }
     } catch (e) {
       toast.error(errMsg(e));
@@ -46,7 +57,7 @@ export default function StockPage() {
       setLoading(false);
     }
   };
-  useEffect(() => { load(page); }, [tab, page, from, to, type]);
+  useEffect(() => { load(page); }, [tab, page, from, to, type, batchStatus, batchDays]);
 
   const loadCard = async () => {
     if (!productId) return toast.error('Pilih produk');
@@ -96,11 +107,36 @@ export default function StockPage() {
     ];
   }, [tab]);
 
+  const batchColumns = [
+    { header: 'Batch', accessorKey: 'batch_no', cell: (c) => <span className="font-mono font-semibold">{c.getValue()}</span> },
+    { header: 'Barang', accessorKey: 'product_name', cell: (c) => (
+        <div><div className="font-semibold">{c.getValue()}</div><div className="font-mono text-xs text-ink-400">{c.row.original.product_code}</div></div>
+      ) },
+    { header: 'Cabang', accessorKey: 'branch_name' },
+    { header: 'Kadaluarsa', accessorKey: 'expiry_date', cell: (c) => {
+        const v = c.getValue();
+        if (!v) return <span className="text-ink-400">Tanpa expiry</span>;
+        const left = +c.row.original.days_left;
+        const expired = left < 0;
+        const soon = !expired && left <= 30;
+        return (
+          <div className="flex items-center gap-2">
+            <span>{fmtDate(v)}</span>
+            <span className={`badge text-xs ${expired ? 'bg-red-100 text-red-600' : soon ? 'bg-amber-100 text-amber-600' : 'bg-emerald-100 text-emerald-600'}`}>
+              {expired ? `lewat ${Math.abs(left)} hari` : `${left} hari`}
+            </span>
+          </div>
+        );
+      } },
+    { header: 'Sisa Qty', accessorKey: 'qty', cell: (c) => <span className="font-bold">{fmtQty(c.getValue())}</span> },
+    { header: 'Tgl Input', accessorKey: 'created_at', cell: (c) => <span className="text-xs">{fmtDate(c.getValue())}</span> },
+  ];
+
   return (
     <div>
-      <PageHeader title="Stok & Kartu Stok" subtitle="Mutasi masuk/keluar, stok saat ini, stok menipis" />
+      <PageHeader title="Stok & Kartu Stok" subtitle="Mutasi masuk/keluar, stok saat ini, stok menipis, batch & expired" />
       <div className="flex gap-1 mb-4 p-1 bg-ink-100 dark:bg-ink-800 rounded-xl w-fit flex-wrap">
-        {[['movements', 'Mutasi Stok'], ['current', 'Stok Saat Ini'], ['low', 'Stok Menipis'], ['card', 'Kartu Stok']].map(([k, l]) => (
+        {[['movements', 'Mutasi Stok'], ['current', 'Stok Saat Ini'], ['low', 'Stok Menipis'], ['batches', 'Batch / Expired'], ['card', 'Kartu Stok']].map(([k, l]) => (
           <button key={k} onClick={() => { setTab(k); setPage(1); }} className={`px-4 py-2 rounded-lg text-sm font-semibold ${tab === k ? 'bg-white dark:bg-ink-700 shadow-soft' : 'text-ink-400'}`}>{l}</button>
         ))}
       </div>
@@ -161,8 +197,79 @@ export default function StockPage() {
               </Field>
             </div>
           )}
-          <DataTable columns={columns} data={data} loading={loading} meta={meta} onPageChange={setPage} />
+          {tab === 'batches' && (
+            <div className="flex flex-wrap gap-2 mb-4 items-end">
+              <Field label="Status" className="!mb-0">
+                <select value={batchStatus} onChange={(e) => { setBatchStatus(e.target.value); setPage(1); }} className="input !w-40">
+                  <option value="active">Belum Kadaluarsa</option>
+                  <option value="expiring">Akan Kadaluarsa</option>
+                  <option value="expired">Sudah Kadaluarsa</option>
+                  <option value="">Semua</option>
+                </select>
+              </Field>
+              {batchStatus === 'expiring' && (
+                <Field label="Dalam (hari)" className="!mb-0">
+                  <input type="number" value={batchDays} min={1} onChange={(e) => { setBatchDays(+e.target.value || 30); setPage(1); }} className="input !w-24" />
+                </Field>
+              )}
+              <button className="btn-primary" onClick={() => setShowBatchModal(true)}><Plus size={16} /> Input Batch</button>
+            </div>
+          )}
+          {tab === 'batches' ? (
+            <DataTable columns={batchColumns} data={data} loading={loading} meta={meta} onPageChange={setPage} emptyText="Tidak ada batch" />
+          ) : (
+            <DataTable columns={columns} data={data} loading={loading} meta={meta} onPageChange={setPage} />
+          )}
         </>
+      )}
+
+      {showBatchModal && (
+        <Modal open={showBatchModal} title="Input Batch / Stok Masuk" onClose={() => setShowBatchModal(false)}>
+          <form onSubmit={async (e) => {
+            e.preventDefault();
+            try {
+              await batchesApi.create(batchForm);
+              toast.success('Batch ditambahkan');
+              setShowBatchModal(false);
+              setBatchForm({ product_id: '', branch_id: '', batch_no: '', expiry_date: '', qty: '' });
+              load(page);
+            } catch (err) {
+              toast.error(errMsg(err));
+            }
+          }}>
+            <div className="space-y-3">
+              {!user?.branch_id && (
+                <Field label="Cabang" required>
+                  <select value={batchForm.branch_id} onChange={(e) => setBatchForm({ ...batchForm, branch_id: e.target.value })} className="input" required>
+                    <option value="">— Pilih Cabang —</option>
+                    {branches.map((b) => <option key={b.id} value={b.id}>{b.name}</option>)}
+                  </select>
+                </Field>
+              )}
+              <Field label="Produk" required>
+                <select value={batchForm.product_id} onChange={(e) => setBatchForm({ ...batchForm, product_id: e.target.value })} className="input" required>
+                  <option value="">— Pilih —</option>
+                  {products.map((p) => <option key={p.id} value={p.id}>{p.code} — {p.name}</option>)}
+                </select>
+              </Field>
+              <div className="grid grid-cols-2 gap-3">
+                <Field label="Nomor Batch" required>
+                  <input value={batchForm.batch_no} onChange={(e) => setBatchForm({ ...batchForm, batch_no: e.target.value })} className="input" placeholder="mis. LOT-2026-01" required />
+                </Field>
+                <Field label="Tanggal Kadaluarsa">
+                  <input type="date" value={batchForm.expiry_date} onChange={(e) => setBatchForm({ ...batchForm, expiry_date: e.target.value })} className="input" />
+                </Field>
+              </div>
+              <Field label="Qty (satuan dasar)" required>
+                <input type="number" step="any" min="0.001" value={batchForm.qty} onChange={(e) => setBatchForm({ ...batchForm, qty: e.target.value })} className="input" placeholder="mis. 48" required />
+              </Field>
+              <div className="flex justify-end gap-2 pt-2">
+                <button type="button" className="btn-secondary" onClick={() => setShowBatchModal(false)}>Batal</button>
+                <button type="submit" className="btn-primary">Simpan</button>
+              </div>
+            </div>
+          </form>
+        </Modal>
       )}
     </div>
   );

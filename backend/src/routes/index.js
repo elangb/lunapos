@@ -9,6 +9,8 @@ const customersCtrl = require('../controllers/customers.controller');
 const salesCtrl = require('../controllers/sales.controller');
 const purchasesCtrl = require('../controllers/purchases.controller');
 const stockCtrl = require('../controllers/stock.controller');
+const batchesCtrl = require('../controllers/batches.controller');
+const exportsCtrl = require('../controllers/exports.controller');
 const cashCtrl = require('../controllers/cash.controller');
 const promotionsCtrl = require('../controllers/promotions.controller');
 const reportsCtrl = require('../controllers/reports.controller');
@@ -131,6 +133,12 @@ router.post('/stock/opnames/:id/submit', auth, requirePerm('opname', 'edit'), st
 router.post('/stock/opnames/:id/approve', auth, requirePerm('opname', 'edit'), stockCtrl.approveOpname);
 router.post('/stock/opnames/:id/reject', auth, requirePerm('opname', 'edit'), stockCtrl.rejectOpname);
 
+/* ============ BATCH / EXPIRY ============ */
+router.get('/batches', auth, requirePerm('stock', 'view'), batchesCtrl.list);
+router.get('/batches/summary', auth, requirePerm('stock', 'view'), batchesCtrl.summary);
+router.post('/batches', auth, requirePerm('stock', 'edit'), batchesCtrl.create);
+router.put('/batches/:id', auth, requirePerm('stock', 'edit'), batchesCtrl.update);
+
 /* ============ KAS & SHIFT ============ */
 router.post('/cash/shifts/open', auth, requirePerm('shifts', 'create'), cashCtrl.openShift);
 router.post('/cash/shifts/:id/close', auth, requirePerm('shifts', 'edit'), cashCtrl.closeShift);
@@ -154,6 +162,10 @@ router.get('/reports/cash', auth, requirePerm('reports', 'view'), reportsCtrl.ca
 router.get('/reports/stock', auth, requirePerm('reports', 'view'), reportsCtrl.stock);
 router.get('/reports/debts', auth, requirePerm('reports', 'view'), reportsCtrl.debts);
 router.get('/reports/monthly', auth, requirePerm('reports', 'view'), reportsCtrl.monthly);
+
+/* ============ EXPORT (Excel / PDF) ============ */
+router.get('/export/report', auth, requirePerm('reports', 'view'), exportsCtrl.report);
+router.get('/export/invoice/:saleId', auth, requirePerm('sales', 'view'), exportsCtrl.invoice);
 
 /* ============ BARCODE ============ */
 router.get('/barcode/labels', auth, requirePerm('barcode', 'view'), barcodeCtrl.labels);

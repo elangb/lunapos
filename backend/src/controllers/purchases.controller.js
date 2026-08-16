@@ -13,6 +13,8 @@ const purchaseSchema = z.object({
     qty: z.number().positive(),
     price: z.number().min(0).optional(),
     discount: z.number().min(0).default(0),
+    batch_no: z.string().nullable().optional(),
+    expiry_date: z.string().nullable().optional(),
   })).min(1),
   discount_total: z.number().min(0).default(0),
   tax_rate: z.number().min(0).max(100).default(0),
@@ -77,6 +79,24 @@ exports.create = asyncHandler(async (req, res) => {
         productId: it.product_id, branchId, qty: baseQty, type: 'purchase',
         refType: 'purchase', refId: purchaseId, note: purchaseNo, userId: req.user.id,
       });
+      // Batch / expiry: jika item dikirim dengan batch_no, catat di product_batches
+      if (it.batch_no) {
+        const [existing] = await conn.query(
+          'SELECT id FROM product_batches WHERE product_id = ? AND branch_id = ? AND batch_no = ?',
+          [it.product_id, branchId, it.batch_no]
+        );
+        if (existing.length) {
+          await conn.query(
+            'UPDATE product_batches SET qty = qty + ?, expiry_date = COALESCE(?, expiry_date), purchase_id = ? WHERE id = ?',
+            [baseQty, it.expiry_date || null, purchaseId, existing[0].id]
+          );
+        } else {
+          await conn.query(
+            `INSERT INTO product_batches (product_id, branch_id, batch_no, expiry_date, qty, purchase_id) VALUES (?,?,?,?,?,?)`,
+            [it.product_id, branchId, it.batch_no, it.expiry_date || null, baseQty, purchaseId]
+          );
+        }
+      }
     }
 
     // Hutang supplier

@@ -14,7 +14,7 @@ export const usePosStore = create(
 
       addItem: (item, qty = 1) => {
         const items = [...get().items];
-        const existing = items.find((i) => i.productId === item.productId && i.unit_id === item.unit_id && !i.is_free);
+        const existing = items.find((i) => i.productId === item.productId && i.unit_id === item.unit_id && i.variant_id === (item.variant_id || null) && !i.is_free);
         if (existing) {
           existing.qty = +(existing.qty + qty).toFixed(3);
         } else {
@@ -76,6 +76,7 @@ export const usePosStore = create(
           items: s.items.map((i) => ({
             product_id: i.productId, unit_id: i.unit_id, qty: i.qty,
             price: i.is_free ? 0 : i.price, discount: i.discount || 0,
+            name: i.name, variant_id: i.variant_id || null, variant_name: i.variant_name || null,
           })),
           customer_id: s.customer?.id || null,
           trans_discount: s.transDiscount,

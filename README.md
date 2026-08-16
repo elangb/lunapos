@@ -9,12 +9,14 @@ Aplikasi POS + Inventory modern multi-cabang. **React JS + Vite + Tailwind CSS**
 | **Kasir POS** | Scan barcode (keyboard & kamera), cari realtime, qty cepat, edit harga per hak akses, diskon item/transaksi, hold & recall, struk thermal 58mm/80mm, shortcut keyboard (F2/F4/F5/F6/F9/F12) |
 | **Pembayaran** | Cash, Transfer, QRIS, Hutang/Piutang (customer wajib + jatuh tempo + bayar sebagian + riwayat) |
 | **Promo engine** | Beli 2 Gratis 1, Beli 5 Bayar 4 (BOGO), diskon % — otomatis tambah item FREE ke keranjang; berlaku per produk/kategori/cabang/periode |
-| **Barang** | Kode otomatis, barcode EAN-13/CODE128, foto, satuan bertingkat (1 dus = 12 lusin = 144 pcs) dengan konversi stok otomatis, harga beli/retail/grosir/member, stok minimum |
-| **Pembelian** | Cash & hutang (termin), diskon item/nota, pajak, ongkir, retur sebagian/penuh dengan penyesuaian stok |
+| **Barang** | Kode otomatis, barcode EAN-13/CODE128, foto, satuan bertingkat (1 dus = 12 lusin = 144 pcs) dengan konversi stok otomatis, harga beli/retail/grosir/member, stok minimum, **variasi produk** (ukuran/warna dengan SKU, barcode & selisih harga sendiri) |
+| **Batch & Expired** | Lacak batch per produk per cabang (input saat pembelian / stok masuk), tanggal kadaluarsa, **FEFO** (First-Expired-First-Out) saat penjualan, tab Batch/Expired di Stok (filter aktif/akan kadaluarsa/sudah kadaluarsa), alert dashboard |
+| **Pembelian** | Cash & hutang (termin), diskon item/nota, pajak, ongkir, retur sebagian/penuh dengan penyesuaian stok, **input batch & tanggal kadaluarsa per item** |
 | **Stok** | Mutasi antar cabang + approval manager, stok opname (scan barcode → input fisik → selisih → approval → jurnal), kartu stok saldo berjalan, stok menipis |
 | **Kas** | Saldo awal, kas masuk/keluar, setor ke pusat, tarik tunai, shift kasir (buka/tutup, hitung fisik, selisih) |
 | **Multi-cabang** | Pusat mengelola semua cabang; kasir hanya melihat cabangnya sendiri; 5 role dengan permission per menu |
-| **Laporan** | Hari ini/kemarin/minggu/bulan/tahun/custom; per kasir/cabang/barang/kategori/customer; retail vs grosir; cash vs hutang; umur hutang & piutang (30/60/90+); bulanan & tahunan dengan grafik omzet/laba/transaksi; export CSV |
+| **Laporan** | Hari ini/kemarin/minggu/bulan/tahun/custom; per kasir/cabang/barang/kategori/customer; retail vs grosir; cash vs hutang; umur hutang & piutang (30/60/90+); bulanan & tahunan dengan grafik omzet/laba/transaksi; **export CSV, Excel (.xlsx) & PDF** + **invoice PDF per transaksi** |
+| **PWA & Offline** | Installable (manifest + service worker), cache API & aset, **mode offline**: transaksi POS disimpan di antrian lokal & otomatis tersinkron saat koneksi kembali, badge status offline/menunggu sinkron |
 | **Dashboard** | Omzet & laba hari ini, transaksi, hutang, piutang, stok menipis, grafik 7 hari, 12 bulan, top 10 produk, top 5 cabang |
 | **Cetak barcode** | Pilih barang → jumlah label → ukuran (58×25 / 58×40 / 100×50 mm) → preview → cetak massal |
 
@@ -122,6 +124,8 @@ POST  /stock/opnames, /:id/items, /:id/submit|approve|reject
 POST  /cash/shifts/open, /:id/close      POST /cash/transactions
 CRUD  /promotions
 GET   /reports/dashboard, /sales, /purchases, /cash, /stock, /debts, /monthly
+GET   /export/report?type=&format=xlsx|pdf   GET /export/invoice/:saleId
+GET   /batches, /batches/summary            POST /batches, PUT /batches/:id
 GET   /barcode/labels, /barcode/scan/:code
 ```
 

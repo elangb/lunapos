@@ -26,6 +26,8 @@ const schema = z.object({
   member_price: z.coerce.number().min(0),
   default_discount: z.coerce.number().min(0).max(100),
   min_stock: z.coerce.number().min(0),
+  has_expiry: z.boolean().optional(),
+  has_variants: z.boolean().optional(),
   is_active: z.boolean(),
   units: z.array(z.object({
     unit_id: z.coerce.number(),
@@ -34,6 +36,14 @@ const schema = z.object({
     barcode: z.string().optional(),
     is_base: z.boolean(),
   })),
+  variants: z.array(z.object({
+    id: z.coerce.number().optional(),
+    name: z.string().min(1),
+    sku: z.string().optional(),
+    barcode: z.string().optional(),
+    price_adjust: z.coerce.number().min(0),
+    is_active: z.boolean().optional(),
+  })).optional(),
 });
 
 function ProductForm({ open, onClose, product, onSaved }) {
@@ -49,10 +59,13 @@ function ProductForm({ open, onClose, product, onSaved }) {
     defaultValues: {
       name: '', category_id: '', brand_id: '', base_unit_id: '', barcode: '',
       buy_price: 0, retail_price: 0, wholesale_price: 0, member_price: 0,
-      default_discount: 0, min_stock: 0, is_active: true, units: [],
+      default_discount: 0, min_stock: 0, has_expiry: false, has_variants: false,
+      is_active: true, units: [], variants: [],
     },
   });
   const unitRows = watch('units') || [];
+  const variantRows = watch('variants') || [];
+  const hasVariants = watch('has_variants');
 
   useEffect(() => {
     if (!open) return;
@@ -66,14 +79,19 @@ function ProductForm({ open, onClose, product, onSaved }) {
         buy_price: +product.buy_price, retail_price: +product.retail_price,
         wholesale_price: +product.wholesale_price, member_price: +product.member_price,
         default_discount: +product.default_discount, min_stock: +product.min_stock,
+        has_expiry: !!product.has_expiry, has_variants: !!product.has_variants,
         is_active: !!product.is_active,
         units: (product.units || []).map((u) => ({
           unit_id: u.unit_id, conversion_factor: +u.conversion_factor, price: +u.price,
           barcode: u.barcode || '', is_base: !!u.is_base,
         })),
+        variants: (product.variants || []).map((v) => ({
+          id: v.id, name: v.name, sku: v.sku || '', barcode: v.barcode || '',
+          price_adjust: +v.price_adjust, is_active: !!v.is_active,
+        })),
       });
     } else {
-      reset({ name: '', category_id: '', brand_id: '', base_unit_id: '', barcode: '', buy_price: 0, retail_price: 0, wholesale_price: 0, member_price: 0, default_discount: 0, min_stock: 0, is_active: true, units: [] });
+      reset({ name: '', category_id: '', brand_id: '', base_unit_id: '', barcode: '', buy_price: 0, retail_price: 0, wholesale_price: 0, member_price: 0, default_discount: 0, min_stock: 0, has_expiry: false, has_variants: false, is_active: true, units: [], variants: [] });
     }
     setPhoto(null);
   }, [open, product]);
@@ -84,15 +102,23 @@ function ProductForm({ open, onClose, product, onSaved }) {
     setValue('units', [...unitRows, { unit_id: defaultUnit?.id || '', conversion_factor: 1, price: 0, barcode: '', is_base: unitRows.length === 0 }]);
   };
 
+  const addVariantRow = () => {
+    setValue('variants', [...variantRows, { name: '', sku: '', barcode: '', price_adjust: 0, is_active: true }]);
+  };
+
   const onSubmit = async (d) => {
     setSaving(true);
     try {
-      const payload = { ...d, units: d.units.filter((u) => u.unit_id) };
+      const payload = {
+        ...d,
+        units: d.units.filter((u) => u.unit_id),
+        variants: d.has_variants ? d.variants.filter((v) => v.name) : [],
+      };
       let body = payload;
       if (photo) {
         const fd = new FormData();
         Object.entries(payload).forEach(([k, v]) => {
-          if (k === 'units') fd.append(k, JSON.stringify(v));
+          if (k === 'units' || k === 'variants') fd.append(k, JSON.stringify(v));
           else fd.append(k, v === null || v === '' ? '' : v);
         });
         fd.append('photo', photo);
@@ -173,7 +199,48 @@ function ProductForm({ open, onClose, product, onSaved }) {
           <label className="flex items-center gap-2 text-sm mt-6">
             <input type="checkbox" {...register('is_active')} className="w-4 h-4 rounded" /> Aktif
           </label>
+          <label className="flex items-center gap-2 text-sm mt-6">
+            <input type="checkbox" {...register('has_expiry')} className="w-4 h-4 rounded" /> Butuh Batch / Expired
+          </label>
+          <label className="flex items-center gap-2 text-sm mt-6">
+            <input type="checkbox" {...register('has_variants')} className="w-4 h-4 rounded" /> Punya Varian (ukuran/warna)
+          </label>
         </div>
+
+        {/* Varian produk */}
+        {hasVariants && (
+          <div className="rounded-xl border border-ink-100 dark:border-ink-700 overflow-hidden">
+            <div className="flex items-center justify-between px-4 py-2.5 bg-ink-50 dark:bg-ink-900/60">
+              <span className="text-sm font-bold">Varian Produk (harga = harga dasar + selisih)</span>
+              <button type="button" onClick={addVariantRow} className="btn-secondary !px-2.5 !py-1 text-xs"><Plus size={13} /> Tambah Varian</button>
+            </div>
+            {variantRows.length === 0 && <p className="px-4 py-3 text-xs text-ink-400">Belum ada varian — contoh: 250ml / 500ml, Merah / Biru, S / M / L / XL</p>}
+            <div className="divide-y divide-ink-100 dark:divide-ink-700">
+              {variantRows.map((v, i) => (
+                <div key={i} className="grid grid-cols-2 md:grid-cols-5 gap-2 px-4 py-2.5 items-end">
+                  <Field label="Nama Varian">
+                    <input value={v.name || ''} onChange={(e) => setValue(`variants.${i}.name`, e.target.value)} className="input !py-1.5" placeholder="mis. 500ml" />
+                  </Field>
+                  <Field label="SKU">
+                    <input value={v.sku || ''} onChange={(e) => setValue(`variants.${i}.sku`, e.target.value)} className="input !py-1.5 font-mono" />
+                  </Field>
+                  <Field label="Barcode">
+                    <input value={v.barcode || ''} onChange={(e) => setValue(`variants.${i}.barcode`, e.target.value)} className="input !py-1.5 font-mono" />
+                  </Field>
+                  <Field label="Selisih Harga (Rp)">
+                    <input type="number" value={v.price_adjust} onChange={(e) => setValue(`variants.${i}.price_adjust`, +e.target.value)} className="input !py-1.5" />
+                  </Field>
+                  <div className="flex items-center gap-2 pb-1.5">
+                    <label className="flex items-center gap-1.5 text-xs">
+                      <input type="checkbox" checked={!!v.is_active} onChange={(e) => setValue(`variants.${i}.is_active`, e.target.checked)} className="w-3.5 h-3.5" /> Aktif
+                    </label>
+                    <button type="button" onClick={() => setValue('variants', variantRows.filter((_, x) => x !== i))} className="text-danger"><Trash2 size={15} /></button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Satuan bertingkat */}
         <div className="rounded-xl border border-ink-100 dark:border-ink-700 overflow-hidden">
@@ -266,7 +333,7 @@ export default function ProductsPage() {
       cell: (c) => (
         <div className="flex gap-1">
           <button className="btn-ghost !p-1.5" title="Detail" onClick={() => setDetail(c.row.original)}><Barcode size={15} /></button>
-          {can('products', 'edit') && <button className="btn-ghost !p-1.5" title="Edit" onClick={() => setEditing(c.row.original)}><Pencil size={15} /></button>}
+          {can('products', 'edit') && <button className="btn-ghost !p-1.5" title="Edit" onClick={async () => { try { const full = await productsApi.get(c.row.original.id); setEditing(full.data); setShowForm(true); } catch (e) { toast.error(errMsg(e)); } }}><Pencil size={15} /></button>}
           {can('products', 'delete') && (
             <button className="btn-ghost !p-1.5 text-danger" title="Nonaktifkan" onClick={async () => {
               if (await swalConfirm({ text: `Nonaktifkan "${c.row.original.name}"?`, confirmText: 'Ya, Nonaktifkan', danger: true })) {

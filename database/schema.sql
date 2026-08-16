@@ -105,6 +105,8 @@ CREATE TABLE products (
   member_price DECIMAL(15,2) NOT NULL DEFAULT 0,
   default_discount DECIMAL(5,2) NOT NULL DEFAULT 0,
   min_stock DECIMAL(15,3) NOT NULL DEFAULT 0,
+  has_expiry TINYINT(1) NOT NULL DEFAULT 0 COMMENT '1 = produk butuh input batch/expired saat pembelian',
+  has_variants TINYINT(1) NOT NULL DEFAULT 0 COMMENT '1 = produk punya varian (ukuran/warna)',
   photo VARCHAR(255) NULL,
   is_active TINYINT(1) NOT NULL DEFAULT 1,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -144,6 +146,39 @@ CREATE TABLE product_stocks (
   KEY idx_stock_branch (branch_id),
   CONSTRAINT fk_stock_product FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE,
   CONSTRAINT fk_stock_branch FOREIGN KEY (branch_id) REFERENCES branches(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+-- ------------------------------------------------------------
+-- VARIAN PRODUK (ukuran/warna) & BATCH (expiry)
+-- ------------------------------------------------------------
+CREATE TABLE product_variants (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  product_id INT NOT NULL,
+  name VARCHAR(100) NOT NULL COMMENT 'mis. 250ml, Merah, XL',
+  sku VARCHAR(50) NULL,
+  barcode VARCHAR(50) NULL,
+  price_adjust DECIMAL(15,2) NOT NULL DEFAULT 0 COMMENT 'selisih harga dari harga dasar produk',
+  is_active TINYINT(1) NOT NULL DEFAULT 1,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE KEY uq_pv_product_name (product_id, name),
+  KEY idx_pv_barcode (barcode),
+  CONSTRAINT fk_pv_product FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE product_batches (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  product_id INT NOT NULL,
+  branch_id INT NOT NULL,
+  batch_no VARCHAR(50) NOT NULL COMMENT 'nomor batch/lot dari supplier',
+  expiry_date DATE NULL,
+  qty DECIMAL(15,3) NOT NULL DEFAULT 0 COMMENT 'sisa stok batch (satuan dasar)',
+  purchase_id BIGINT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE KEY uq_batch (product_id, branch_id, batch_no),
+  KEY idx_batch_expiry (expiry_date),
+  KEY idx_batch_branch (branch_id),
+  CONSTRAINT fk_batch_product FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE,
+  CONSTRAINT fk_batch_branch FOREIGN KEY (branch_id) REFERENCES branches(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 -- ------------------------------------------------------------

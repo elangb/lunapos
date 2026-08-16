@@ -14,6 +14,8 @@ const productSchema = z.object({
   member_price: z.coerce.number().min(0).default(0),
   default_discount: z.coerce.number().min(0).max(100).default(0),
   min_stock: z.coerce.number().min(0).default(0),
+  has_expiry: z.union([z.boolean(), z.string()]).transform((v) => (v === 'false' ? false : !!v)).default(false),
+  has_variants: z.union([z.boolean(), z.string()]).transform((v) => (v === 'false' ? false : !!v)).default(false),
   is_active: z.union([z.boolean(), z.string()]).transform((v) => (v === 'false' ? false : !!v)).default(true),
   units: z.array(z.object({
     unit_id: z.coerce.number().int(),
@@ -22,6 +24,13 @@ const productSchema = z.object({
     barcode: z.string().nullable().optional(),
     is_base: z.union([z.boolean(), z.string()]).transform((v) => (v === 'false' ? false : !!v)).default(false),
   })).optional(),
+  variants: z.array(z.object({
+    name: z.string().min(1),
+    sku: z.string().nullable().optional(),
+    barcode: z.string().nullable().optional(),
+    price_adjust: z.coerce.number().default(0),
+    is_active: z.union([z.boolean(), z.string()]).transform((v) => (v === 'false' ? false : !!v)).default(true),
+  })).optional(),
 });
 
 /* Normalisasi body dari multipart/form-data (units jadi string JSON) */
@@ -29,12 +38,15 @@ function normalizeBody(req) {
   if (typeof req.body.units === 'string') {
     try { req.body.units = JSON.parse(req.body.units); } catch { delete req.body.units; }
   }
+  if (typeof req.body.variants === 'string') {
+    try { req.body.variants = JSON.parse(req.body.variants); } catch { delete req.body.variants; }
+  }
 }
 
 const SELECT = `p.id, p.code, p.name, p.category_id, c.name AS category_name, p.brand_id, b.name AS brand_name,
   p.base_unit_id, u.name AS base_unit_name, u.short_name AS base_unit_short,
   p.barcode, p.buy_price, p.retail_price, p.wholesale_price, p.member_price,
-  p.default_discount, p.min_stock, p.photo, p.is_active, p.created_at`;
+  p.default_discount, p.min_stock, p.has_expiry, p.has_variants, p.photo, p.is_active, p.created_at`;
 
 /* GET /api/products?search=&category_id=&brand_id=&branch_id=&low_stock=&is_active= */
 exports.list = asyncHandler(async (req, res) => {
@@ -79,6 +91,7 @@ exports.options = asyncHandler(async (req, res) => {
   const [rows] = await pool.query(
     `SELECT p.id, p.code, p.name, p.barcode, p.category_id, c.name AS category_name,
             p.retail_price, p.wholesale_price, p.member_price, p.default_discount, p.photo, p.is_active,
+            p.has_expiry, p.has_variants,
             ps.qty AS stock_qty, p.min_stock
      FROM products p
      LEFT JOIN categories c ON c.id = p.category_id
@@ -95,7 +108,10 @@ exports.options = asyncHandler(async (req, res) => {
   );
   const unitMap = {};
   units.forEach((u) => { (unitMap[u.product_id] = unitMap[u.product_id] || []).push(u); });
-  return ok(res, rows.map((p) => ({ ...p, units: unitMap[p.id] || [] })));
+  const [variants] = await pool.query('SELECT * FROM product_variants WHERE is_active = 1');
+  const variantMap = {};
+  variants.forEach((v) => { (variantMap[v.product_id] = variantMap[v.product_id] || []).push(v); });
+  return ok(res, rows.map((p) => ({ ...p, units: unitMap[p.id] || [], variants: variantMap[p.id] || [] })));
 });
 
 /* GET /api/products/:id */
@@ -118,7 +134,11 @@ exports.get = asyncHandler(async (req, res) => {
     `SELECT ps.branch_id, b.name AS branch_name, ps.qty FROM product_stocks ps JOIN branches b ON b.id = ps.branch_id WHERE ps.product_id = ?`,
     [req.params.id]
   );
-  return ok(res, { ...rows[0], units, stocks });
+  const [variants] = await pool.query(
+    'SELECT id, name, sku, barcode, price_adjust, is_active FROM product_variants WHERE product_id = ? ORDER BY id',
+    [req.params.id]
+  );
+  return ok(res, { ...rows[0], units, stocks, variants });
 });
 
 /* POST /api/products */
@@ -130,11 +150,12 @@ exports.create = asyncHandler(async (req, res) => {
   try {
     await conn.beginTransaction();
     const [result] = await conn.query(
-      `INSERT INTO products (code, name, category_id, brand_id, base_unit_id, barcode, buy_price, retail_price, wholesale_price, member_price, default_discount, min_stock, photo, is_active)
-       VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+      `INSERT INTO products (code, name, category_id, brand_id, base_unit_id, barcode, buy_price, retail_price, wholesale_price, member_price, default_discount, min_stock, has_expiry, has_variants, photo, is_active)
+       VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
       [code, data.name, data.category_id, data.brand_id, data.base_unit_id, data.barcode || null,
         data.buy_price, data.retail_price, data.wholesale_price, data.member_price,
-        data.default_discount, data.min_stock, req.file?.filename ? `/uploads/${req.file.filename}` : null, data.is_active ? 1 : 0]
+        data.default_discount, data.min_stock, data.has_expiry ? 1 : 0, data.has_variants ? 1 : 0,
+        req.file?.filename ? `/uploads/${req.file.filename}` : null, data.is_active ? 1 : 0]
     );
     const productId = result.insertId;
     // unit default (satuan dasar) + unit tambahan
@@ -144,6 +165,16 @@ exports.create = asyncHandler(async (req, res) => {
         `INSERT INTO product_units (product_id, unit_id, conversion_factor, price, barcode, is_base) VALUES (?,?,?,?,?,?)`,
         [productId, u.unit_id, u.conversion_factor, u.price, u.barcode || null, u.is_base ? 1 : 0]
       );
+    }
+    // varian produk
+    if (Array.isArray(data.variants)) {
+      for (const v of data.variants) {
+        if (!v.name) continue;
+        await conn.query(
+          `INSERT INTO product_variants (product_id, name, sku, barcode, price_adjust, is_active) VALUES (?,?,?,?,?,?)`,
+          [productId, v.name, v.sku || null, v.barcode || null, v.price_adjust || 0, v.is_active ? 1 : 0]
+        );
+      }
     }
     // stok 0 di semua cabang
     await conn.query('INSERT INTO product_stocks (product_id, branch_id, qty) SELECT ?, id, 0 FROM branches WHERE is_active = 1', [productId]);
@@ -170,7 +201,7 @@ exports.update = asyncHandler(async (req, res) => {
     await conn.query(
       `UPDATE products SET name = ?, category_id = ?, brand_id = ?, base_unit_id = ?, barcode = ?,
         buy_price = ?, retail_price = ?, wholesale_price = ?, member_price = ?,
-        default_discount = ?, min_stock = ?, is_active = ?
+        default_discount = ?, min_stock = ?, has_expiry = ?, has_variants = ?, is_active = ?
         ${req.file ? ', photo = ?' : ''} WHERE id = ?`,
       req.file
         ? [data.name ?? old[0].name, data.category_id ?? old[0].category_id, data.brand_id ?? old[0].brand_id,
@@ -178,6 +209,8 @@ exports.update = asyncHandler(async (req, res) => {
            data.buy_price ?? old[0].buy_price, data.retail_price ?? old[0].retail_price,
            data.wholesale_price ?? old[0].wholesale_price, data.member_price ?? old[0].member_price,
            data.default_discount ?? old[0].default_discount, data.min_stock ?? old[0].min_stock,
+           data.has_expiry === undefined ? old[0].has_expiry : (data.has_expiry ? 1 : 0),
+           data.has_variants === undefined ? old[0].has_variants : (data.has_variants ? 1 : 0),
            data.is_active === undefined ? old[0].is_active : (data.is_active ? 1 : 0),
            `/uploads/${req.file.filename}`, req.params.id]
         : [data.name ?? old[0].name, data.category_id ?? old[0].category_id, data.brand_id ?? old[0].brand_id,
@@ -185,6 +218,8 @@ exports.update = asyncHandler(async (req, res) => {
            data.buy_price ?? old[0].buy_price, data.retail_price ?? old[0].retail_price,
            data.wholesale_price ?? old[0].wholesale_price, data.member_price ?? old[0].member_price,
            data.default_discount ?? old[0].default_discount, data.min_stock ?? old[0].min_stock,
+           data.has_expiry === undefined ? old[0].has_expiry : (data.has_expiry ? 1 : 0),
+           data.has_variants === undefined ? old[0].has_variants : (data.has_variants ? 1 : 0),
            data.is_active === undefined ? old[0].is_active : (data.is_active ? 1 : 0), req.params.id]
     );
     // update satuan: hapus lama, insert ulang (unit id dipertahankan utk histori)
@@ -201,6 +236,32 @@ exports.update = asyncHandler(async (req, res) => {
           await conn.query(
             'INSERT INTO product_units (product_id, unit_id, conversion_factor, price, barcode, is_base) VALUES (?,?,?,?,?,?)',
             [req.params.id, u.unit_id, u.conversion_factor, u.price, u.barcode || null, u.is_base ? 1 : 0]
+          );
+        }
+      }
+    }
+    // update varian: hapus yang tidak ada di payload, upsert sisanya
+    if (Array.isArray(data.variants)) {
+      const sentIds = data.variants.filter((v) => v.id).map((v) => v.id);
+      if (sentIds.length) {
+        await conn.query(
+          `UPDATE product_variants SET is_active = 0 WHERE product_id = ? AND id NOT IN (?)`,
+          [req.params.id, sentIds]
+        );
+      } else {
+        await conn.query('UPDATE product_variants SET is_active = 0 WHERE product_id = ?', [req.params.id]);
+      }
+      for (const v of data.variants) {
+        if (!v.name) continue;
+        if (v.id) {
+          await conn.query(
+            'UPDATE product_variants SET name = ?, sku = ?, barcode = ?, price_adjust = ?, is_active = ? WHERE id = ?',
+            [v.name, v.sku || null, v.barcode || null, v.price_adjust || 0, v.is_active ? 1 : 0, v.id]
+          );
+        } else {
+          await conn.query(
+            'INSERT INTO product_variants (product_id, name, sku, barcode, price_adjust, is_active) VALUES (?,?,?,?,?,?)',
+            [req.params.id, v.name, v.sku || null, v.barcode || null, v.price_adjust || 0, v.is_active ? 1 : 0]
           );
         }
       }

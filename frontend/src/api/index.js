@@ -139,6 +139,18 @@ export const reportsApi = {
   monthly: (p = {}) => client.get(`/reports/monthly${qs(p)}`).then((r) => r.data),
 };
 
+export const batchesApi = {
+  list: (p = {}) => client.get(`/batches${qs(p)}`).then((r) => r.data),
+  summary: () => client.get('/batches/summary').then((r) => r.data),
+  create: (d) => client.post('/batches', d).then((r) => r.data),
+  update: (id, d) => client.put(`/batches/${id}`, d).then((r) => r.data),
+};
+
+export const exportApi = {
+  report: (params) => client.get(`/export/report${qs(params)}`, { responseType: 'blob' }).then((r) => r.data),
+  invoice: (saleId) => client.get(`/export/invoice/${saleId}`, { responseType: 'blob' }).then((r) => r.data),
+};
+
 export const barcodeApi = {
   labels: (productIds, withUnits = true) => client.get(`/barcode/labels?product_ids=${productIds.join(',')}&with_units=${withUnits ? 1 : 0}`).then((r) => r.data),
   scan: (code) => client.get(`/barcode/scan/${encodeURIComponent(code)}`).then((r) => r.data),

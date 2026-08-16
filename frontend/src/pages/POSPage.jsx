@@ -14,6 +14,7 @@ import { errMsg } from '../api/client';
 import { useAuthStore } from '../stores/auth';
 import { usePosStore } from '../stores/pos';
 import { rupiah, fmtQty, fmtDate } from '../utils/format';
+import { isOnline, enqueue } from '../utils/offline';
 
 /* ================== SCANNER KAMERA ================== */
 function ScannerModal({ open, onClose, onScanned }) {
@@ -112,15 +113,27 @@ function PaymentModal({ open, onClose, onSuccess, branchId }) {
     if (isDebt && !store.customer) return toast.error('Pilih customer untuk penjualan hutang');
     if (isDebt && !dueDate) return toast.error('Isi jatuh tempo');
     if (!isDebt && +received < t.total) return toast.error('Uang diterima kurang dari total');
+    const payload = {
+      ...store.payload(),
+      branch_id: branchId,
+      payment_method: method,
+      total_paid: isDebt ? 0 : +received,
+      due_date: dueDate || null,
+    };
     setLoading(true);
+
+    /* Mode offline: simpan ke antrian lokal */
+    if (!isOnline()) {
+      enqueue({ type: 'sale', payload });
+      toast.info(`Offline — transaksi Rp ${rupiah(t.total)} disimpan lokal, akan dikirim saat online`);
+      onClose();
+      store.clear();
+      setLoading(false);
+      return;
+    }
+
     try {
-      const res = await salesApi.create({
-        ...store.payload(),
-        branch_id: branchId,
-        payment_method: method,
-        total_paid: isDebt ? 0 : +received,
-        due_date: dueDate || null,
-      });
+      const res = await salesApi.create(payload);
       toast.success(`Transaksi ${res.data.invoice_no} berhasil!`);
       onClose();
       onSuccess(res.data.id);
@@ -297,6 +310,7 @@ export default function POSPage() {
   const [showReceipt, setShowReceipt] = useState(false);
   const [lastSaleId, setLastSaleId] = useState(null);
   const [customerOpen, setCustomerOpen] = useState(false);
+  const [variantPicker, setVariantPicker] = useState(null); // {product, variants}
 
   const searchRef = useRef(null);
   const barcodeRef = useRef(null);
@@ -341,18 +355,20 @@ export default function POSPage() {
     return list;
   }, [products, search, catFilter]);
 
-  const addProduct = useCallback((p, unitId = null, qty = 1) => {
+  const addProduct = useCallback((p, unitId = null, qty = 1, variant = null) => {
     const units = p.units || [];
     const unit = units.find((u) => u.id === unitId) || units.find((u) => u.is_base) || units[0] || { unit_id: null, unit_name: 'pcs', conversion_factor: 1, price: p.retail_price };
     const isBase = units.find((u) => u.is_base);
     const useTypePrice = isBase && unit.id === isBase.id && (store.customer?.type === 'member' || store.customer?.type === 'grosir');
     const price = useTypePrice ? priceFor(p, store.customer) : (+unit.price || priceFor(p, store.customer));
+    const finalPrice = variant ? (+price + +variant.price_adjust) : price;
     store.addItem({
-      productId: p.id, code: p.code, name: p.name,
+      productId: p.id, code: p.code, name: variant ? `${p.name} (${variant.name})` : p.name,
+      variant_id: variant?.id || null, variant_name: variant?.name || null,
       unit_id: unit.unit_id, unit_name: unit.unit_short || 'pcs', unit_factor: +unit.conversion_factor,
-      price, discount: 0, stockQty: +p.stock_qty || 0,
+      price: finalPrice, discount: 0, stockQty: +p.stock_qty || 0,
     }, qty);
-    toast.success(`${p.name} ditambahkan`, { duration: 800 });
+    toast.success(variant ? `${p.name} — ${variant.name} ditambahkan` : `${p.name} ditambahkan`, { duration: 800 });
   }, [store, store.customer]);
 
   const handleBarcode = useCallback(async (code) => {
@@ -362,7 +378,15 @@ export default function POSPage() {
       const res = await barcodeApi.scan(c);
       const p = res.data;
       const full = products.find((x) => x.id === p.id);
-      addProduct(full || { ...p, units: [{ unit_id: p.unit_id, unit_name: p.unit_short, conversion_factor: p.conversion_factor, price: p.price }] }, p.unit_id);
+      if (p.is_variant) {
+        // scan barcode varian: p.price sudah = base + adjust
+        const base = full
+          ? { ...full, units: (full.units || []).map((u) => (u.id === p.unit_id ? { ...u, price: p.price } : u)) }
+          : { ...p, units: [{ unit_id: p.unit_id, unit_name: p.unit_short, conversion_factor: p.conversion_factor, price: p.price }] };
+        addProduct({ ...base, retail_price: p.price }, p.unit_id, 1, { id: null, name: p.variant_name, price_adjust: 0 });
+      } else {
+        addProduct(full || { ...p, units: [{ unit_id: p.unit_id, unit_name: p.unit_short, conversion_factor: p.conversion_factor, price: p.price }] }, p.unit_id);
+      }
       setBarcodeInput('');
     } catch (e) {
       toast.error(errMsg(e));
@@ -448,10 +472,11 @@ export default function POSPage() {
               {filtered.map((p) => {
                 const stock = +p.stock_qty || 0;
                 const low = stock <= +p.min_stock;
+                const hasVariants = p.has_variants && p.variants?.length > 0;
                 return (
                   <button
                     key={p.id}
-                    onClick={() => addProduct(p)}
+                    onClick={() => (hasVariants ? setVariantPicker({ product: p, variants: p.variants }) : addProduct(p))}
                     className="card p-3 text-left hover:shadow-medium hover:border-primary-400 transition-all group disabled:opacity-40"
                     disabled={stock <= 0}
                   >
@@ -465,7 +490,10 @@ export default function POSPage() {
                     </div>
                     <div className="mt-2 text-sm font-semibold leading-snug line-clamp-2">{p.name}</div>
                     <div className="text-[11px] text-ink-400 font-mono">{p.code}</div>
-                    <div className="mt-1.5 text-primary-600 dark:text-primary-400 font-extrabold">{rupiah(+p.retail_price || 0)}</div>
+                    <div className="mt-1.5 flex items-center justify-between">
+                      <div className="text-primary-600 dark:text-primary-400 font-extrabold">{rupiah(+p.retail_price || 0)}</div>
+                      {hasVariants && <span className="badge bg-primary-100 dark:bg-primary-900/40 text-primary-600 dark:text-primary-400 !text-[10px]">{p.variants.length} varian</span>}
+                    </div>
                   </button>
                 );
               })}
@@ -622,6 +650,31 @@ export default function POSPage() {
       <HoldModal open={showHold} onClose={() => setShowHold(false)} onRecall={handleRecall} />
       <PaymentModal open={showPay} onClose={() => setShowPay(false)} branchId={branchId} onSuccess={(id) => { setLastSaleId(id); setShowReceipt(true); }} />
       <ReceiptModal open={showReceipt} onClose={() => setShowReceipt(false)} saleId={lastSaleId} />
+
+      {/* ===== Modal pilih varian ===== */}
+      <Modal open={!!variantPicker} onClose={() => setVariantPicker(null)} title={variantPicker ? `Pilih Varian — ${variantPicker.product.name}` : ''} size="sm">
+        {variantPicker && (
+          <div className="space-y-2">
+            {variantPicker.variants.map((v) => {
+              const basePrice = priceFor(variantPicker.product, store.customer);
+              const vPrice = +basePrice + +v.price_adjust;
+              return (
+                <button
+                  key={v.id}
+                  onClick={() => { addProduct(variantPicker.product, null, 1, v); setVariantPicker(null); }}
+                  className="w-full flex items-center justify-between p-3 rounded-xl border border-ink-100 dark:border-ink-700 hover:border-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-all text-left"
+                >
+                  <div className="min-w-0">
+                    <div className="text-sm font-semibold">{v.name}</div>
+                    <div className="text-[11px] text-ink-400 font-mono truncate">{v.sku || v.barcode}</div>
+                  </div>
+                  <div className="text-sm font-bold text-primary-600 dark:text-primary-400 ml-3">{rupiah(vPrice)}</div>
+                </button>
+              );
+            })}
+          </div>
+        )}
+      </Modal>
     </div>
   );
 }
